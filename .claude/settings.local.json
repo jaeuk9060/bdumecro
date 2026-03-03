@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s /b \"D:\\\\JaeUk\\\\01.Project\\\\Python\\\\bdumecro\")",
+      "Bash(findstr:*)",
+      "Bash(cd:*)",
+      "Bash(dir:*)",
+      "Bash(powershell:*)",
+      "Bash(python -m py_compile:*)"
+    ]
+  }
+}
