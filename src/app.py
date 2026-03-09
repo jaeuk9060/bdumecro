@@ -277,7 +277,11 @@ class BDUTrackerApp(ctk.CTk):
                     # 강의 재생 스크립트 실행
                     self._update_status(f"강의 {i+1}/{total} 열기 중...", "loading")
                     driver.execute_script(onclick)
-                    time.sleep(8)  # 모달 및 비디오 로드 대기 (충분히 대기)
+                    time.sleep(5)  # 모달 로드 대기
+
+                    # 이어듣기 모달 확인 및 "예" 클릭
+                    self._handle_continue_modal(driver)
+                    time.sleep(3)
 
                     # 비디오 자동 재생 시작
                     self._update_status(f"재생 버튼 대기 중... ({i+1}/{total})", "loading")
@@ -427,6 +431,28 @@ class BDUTrackerApp(ctk.CTk):
             except Exception as e:
                 logger.error(f"모달 모니터링 오류: {e}")
                 time.sleep(check_interval)
+
+    def _handle_continue_modal(self, driver) -> bool:
+        """이어듣기 모달 처리 - '예' 버튼 클릭"""
+        try:
+            # 이어듣기 모달의 "예" 버튼 찾기 (btn-light-blue 클래스)
+            yes_btn = driver.execute_script("""
+                var modal = document.querySelector('.modal-type-confirm');
+                if (modal) {
+                    var yesBtn = modal.querySelector('a.modal-btn.btn-light-blue');
+                    if (yesBtn) {
+                        yesBtn.click();
+                        return true;
+                    }
+                }
+                return false;
+            """)
+            if yes_btn:
+                logger.info("이어듣기 모달 '예' 클릭")
+                return True
+        except Exception as e:
+            logger.debug(f"이어듣기 모달 처리: {e}")
+        return False
 
     def _start_video_playback(self, driver, max_attempts: int = 15) -> bool:
         """비디오 재생 시작 - video.play() 방식"""
