@@ -1,6 +1,13 @@
 """CustomTkinter 메인 앱"""
+import logging
 import threading
+import time
 import customtkinter as ctk
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.action_chains import ActionChains
 
 from src.browser.driver import BrowserDriver
 from src.browser.login import LoginHandler
@@ -8,6 +15,8 @@ from src.parser.lms_parser import LMSParser, CourseInfo
 from src.gui.dashboard import Dashboard
 from src.gui.components import CourseConfirmModal
 from src.utils.config import Config
+
+logger = logging.getLogger(__name__)
 
 
 class BDUTrackerApp(ctk.CTk):
@@ -168,8 +177,17 @@ class BDUTrackerApp(ctk.CTk):
         CourseConfirmModal(
             self,
             course,
+            on_confirm=lambda: self._on_modal_confirm(course),
             on_cancel=self._on_modal_cancel,
         )
+
+    def _on_modal_confirm(self, course: CourseInfo) -> None:
+        """모달 확인 - 전체 강의 새 탭으로 열기"""
+        self.dashboard.set_status(f"'{course.name}' 강의 재생 준비 중...", "loading")
+        thread = threading.Thread(
+            target=self._open_all_lectures, args=(course,), daemon=True
+        )
+        thread.start()
 
     def _on_modal_cancel(self) -> None:
         """모달 취소 - LMS 페이지로 이동"""
@@ -195,6 +213,298 @@ class BDUTrackerApp(ctk.CTk):
             self._update_status(f"'{course.name}' 강의실 열림", "success")
         except Exception as e:
             self._update_status(f"강의실 이동 실패: {str(e)}", "error")
+
+    def _open_all_lectures(self, course: CourseInfo) -> None:
+        """전체 미청취 강의를 새 탭으로 열기 (백그라운드 스레드)"""
+        try:
+            driver = self.login_handler.driver
+
+            # 1. 강의실로 이동
+            self._update_status(f"'{course.name}' 강의실 이동 중...", "loading")
+            driver.execute_script(course.onclick_script)
+            time.sleep(3)  # 페이지 로딩 대기
+
+            # 2. 전체보기 버튼 클릭 (모든 주차 표시)
+            self._update_status("전체 강의 목록 로딩 중...", "loading")
+            try:
+                all_btn = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.ID, "btn_ALL"))
+                )
+                all_btn.click()
+                time.sleep(2)
+            except TimeoutException:
+                logger.warning("전체보기 버튼을 찾을 수 없습니다.")
+
+            # 3. 강의듣기/다시보기 버튼 모두 찾기
+            lecture_buttons = driver.find_elements(
+                By.CSS_SELECTOR, "button[onclick*='lectView']"
+            )
+
+            if not lecture_buttons:
+                self._update_status("재생 가능한 강의를 찾을 수 없습니다.", "error")
+                return
+
+            # 미완료 강의만 필터링 (진도율 < 100%)
+            incomplete_lectures = []
+            for btn in lecture_buttons:
+                try:
+                    # 버튼 텍스트로 확인 (강의듣기 = 미완료, 다시보기 = 완료)
+                    btn_text = btn.text.strip()
+                    if "강의듣기" in btn_text:
+                        onclick = btn.get_attribute("onclick")
+                        incomplete_lectures.append(onclick)
+                except Exception:
+                    continue
+
+            if not incomplete_lectures:
+                self._update_status("미청취 강의가 없습니다!", "success")
+                return
+
+            # 4. 각 강의를 순차적으로 시청 (한 강의씩)
+            total = len(incomplete_lectures)
+            self._update_status(f"미청취 강의 {total}개 발견! 순차 시청 시작...", "loading")
+
+            for i, onclick in enumerate(incomplete_lectures):
+                try:
+                    # 강의실 페이지로 이동
+                    driver.get(self.config.LMS_URL)
+                    time.sleep(2)
+
+                    # 강의실로 이동
+                    driver.execute_script(course.onclick_script)
+                    time.sleep(2)
+
+                    # 강의 재생 스크립트 실행
+                    self._update_status(f"강의 {i+1}/{total} 열기 중...", "loading")
+                    driver.execute_script(onclick)
+                    time.sleep(8)  # 모달 및 비디오 로드 대기 (충분히 대기)
+
+                    # 비디오 자동 재생 시작
+                    self._update_status(f"재생 버튼 대기 중... ({i+1}/{total})", "loading")
+                    if not self._start_video_playback(driver):
+                        self._update_status(f"재생 버튼 클릭 실패 ({i+1}/{total})", "error")
+                        continue
+
+                    self._update_status(f"강의 {i+1}/{total} 재생 중...", "loading")
+
+                    # 강의 완료까지 대기 (출석 확인 포함)
+                    self._wait_for_lecture_completion(driver, i + 1, total)
+
+                    self._update_status(f"강의 {i+1}/{total} 완료!", "success")
+                    time.sleep(2)
+
+                except Exception as e:
+                    logger.error(f"강의 {i+1} 시청 실패: {e}")
+                    self._update_status(f"강의 {i+1} 오류: {str(e)}", "error")
+                    continue
+
+            self._update_status(f"모든 강의 완료! ({total}개)", "success")
+
+        except Exception as e:
+            logger.error(f"강의 열기 오류: {e}")
+            self._update_status(f"오류: {str(e)}", "error")
+
+    def _wait_for_lecture_completion(self, driver, current: int, total: int) -> None:
+        """강의 완료까지 대기 (출석 확인 + 완료 확인 모달 자동 클릭)"""
+        check_interval = 60  # 1분마다 체크
+        attendance_clicked = False
+        video_ended = False
+
+        while True:
+            try:
+                # 1. 확인 모달 체크 및 클릭 (출석 확인 또는 완료 확인)
+                modal_btn = self._find_attendance_modal_button(driver, timeout=2)
+                if modal_btn:
+                    modal_btn.click()
+                    if not attendance_clicked:
+                        logger.info(f"출석 확인 버튼 클릭됨 (강의 {current})")
+                        self._update_status(f"출석 확인 완료! ({current}/{total})", "success")
+                        attendance_clicked = True
+                    else:
+                        # 영상 종료 후 완료 확인 모달
+                        logger.info(f"완료 확인 버튼 클릭됨 (강의 {current})")
+                        self._update_status(f"강의 {current}/{total} 완료 확인!", "success")
+                        time.sleep(1)
+                        break  # 완료 확인 후 종료
+                    time.sleep(1)
+                    continue
+
+                # 2. 영상 남은 시간 확인
+                remaining = driver.execute_script("""
+                    var video = document.querySelector('video');
+                    if (video && video.duration && !isNaN(video.duration)) {
+                        return video.duration - video.currentTime;
+                    }
+                    return -1;
+                """)
+
+                if remaining is not None and remaining >= 0:
+                    remaining_min = int(remaining // 60)
+                    remaining_sec = int(remaining % 60)
+
+                    if remaining <= 5:
+                        # 영상 종료됨 - 완료 확인 모달 대기
+                        if not video_ended:
+                            logger.info(f"강의 {current} 영상 종료, 완료 확인 대기...")
+                            self._update_status(f"강의 {current}/{total} 종료, 완료 확인 대기...", "loading")
+                            video_ended = True
+                        time.sleep(3)  # 완료 모달이 뜰 때까지 짧게 대기
+                        continue
+                    else:
+                        self._update_status(
+                            f"강의 {current}/{total} 시청 중... 남은 시간: {remaining_min}분 {remaining_sec}초",
+                            "loading"
+                        )
+
+                # 3. 다음 체크까지 대기
+                time.sleep(check_interval)
+
+            except Exception as e:
+                logger.debug(f"강의 대기 중 오류: {e}")
+                time.sleep(check_interval)
+
+    def _start_attendance_monitor(self, tabs: list[str]) -> None:
+        """출석 확인 모달 자동 클릭 모니터링 시작 (미사용 - 순차 시청으로 변경)"""
+        self.attendance_monitor_active = True
+        thread = threading.Thread(
+            target=self._monitor_attendance_modal, args=(tabs,), daemon=True
+        )
+        thread.start()
+
+    def _monitor_attendance_modal(self, tabs: list[str]) -> None:
+        """출석 확인 모달 감지 및 자동 클릭 (백그라운드 스레드)"""
+        driver = self.login_handler.driver
+        check_interval = 60  # 1분마다 체크
+        modal_timeout = 5  # 모달 찾기 타임아웃
+
+        # 확인 버튼 클릭 완료된 탭
+        confirmed_tabs = set()
+
+        logger.info(f"출석 모달 모니터링 시작 ({len(tabs)}개 탭)")
+
+        while getattr(self, "attendance_monitor_active", True) and tabs:
+            try:
+                # 각 탭을 순회하며 모달 확인
+                active_tabs = []
+                for tab_handle in tabs:
+                    try:
+                        # 탭이 아직 열려있는지 확인
+                        if tab_handle not in driver.window_handles:
+                            continue
+
+                        active_tabs.append(tab_handle)
+
+                        # 이미 확인된 탭은 스킵 (남은 시간 대기만)
+                        if tab_handle in confirmed_tabs:
+                            continue
+
+                        driver.switch_to.window(tab_handle)
+
+                        # 출석 확인 모달 찾기
+                        modal_btn = self._find_attendance_modal_button(driver, modal_timeout)
+
+                        if modal_btn:
+                            modal_btn.click()
+                            logger.info(f"출석 확인 버튼 클릭됨 (탭: {tab_handle[:10]}...)")
+                            self._update_status("출석 확인 버튼 클릭!", "success")
+                            confirmed_tabs.add(tab_handle)
+                            time.sleep(1)
+
+                    except Exception as e:
+                        logger.debug(f"탭 {tab_handle[:10]} 처리 중 오류: {e}")
+                        continue
+
+                tabs = active_tabs
+
+                # 모든 탭이 닫히면 종료
+                if not tabs:
+                    logger.info("모든 강의 탭이 닫힘. 모니터링 종료.")
+                    self._update_status("모든 강의 완료!", "success")
+                    break
+
+                time.sleep(check_interval)
+
+            except Exception as e:
+                logger.error(f"모달 모니터링 오류: {e}")
+                time.sleep(check_interval)
+
+    def _start_video_playback(self, driver, max_attempts: int = 15) -> bool:
+        """비디오 재생 시작 - video.play() 방식"""
+
+        # 1. video 요소가 로드될 때까지 대기
+        logger.info("비디오 요소 대기 중...")
+        for i in range(max_attempts):
+            video_ready = driver.execute_script("""
+                var video = document.querySelector('video');
+                return video && video.readyState >= 2;
+            """)
+            if video_ready:
+                logger.info("비디오 준비 완료")
+                break
+            time.sleep(1)
+
+        time.sleep(2)  # 추가 안정화
+
+        # 2. video.play() 호출
+        for attempt in range(5):
+            try:
+                driver.execute_script("""
+                    var video = document.querySelector('video');
+                    if (video) {
+                        video.play();
+                    }
+                """)
+                time.sleep(1)
+
+                # 재생 확인
+                is_playing = driver.execute_script("""
+                    var video = document.querySelector('video');
+                    return video && !video.paused;
+                """)
+                if is_playing:
+                    logger.info("비디오 재생 시작됨!")
+                    return True
+
+            except Exception as e:
+                logger.debug(f"재생 시도 {attempt+1} 실패: {e}")
+                time.sleep(1)
+
+        return False
+
+    def _find_attendance_modal_button(self, driver, timeout: int = 5):
+        """출석 확인 모달의 확인 버튼 찾기"""
+        try:
+            # 모달 확인 버튼 선택자들
+            selectors = [
+                "a.modal-btn",  # BDU LMS 모달
+                "#modal-window .modal-btn",
+                ".modal-buttons .modal-btn",
+                "button.modal-btn",
+            ]
+
+            for selector in selectors:
+                try:
+                    btn = WebDriverWait(driver, timeout).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
+                    )
+                    # 모달이 보이는지 확인
+                    modal = driver.find_element(By.ID, "modal-window")
+                    if modal and modal.is_displayed():
+                        return btn
+                except TimeoutException:
+                    continue
+                except Exception:
+                    continue
+
+        except Exception:
+            pass
+
+        return None
+
+    def stop_attendance_monitor(self) -> None:
+        """출석 모달 모니터링 중지"""
+        self.attendance_monitor_active = False
+        logger.info("출석 모달 모니터링 중지됨")
 
     def _on_refresh(self) -> None:
         """새로고침 버튼 클릭 핸들러"""
@@ -228,6 +538,7 @@ class BDUTrackerApp(ctk.CTk):
 
     def on_closing(self) -> None:
         """앱 종료 시 정리"""
+        self.stop_attendance_monitor()
         if self.browser:
             self.browser.quit()
         self.destroy()

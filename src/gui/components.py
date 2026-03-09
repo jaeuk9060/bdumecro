@@ -349,9 +349,11 @@ class CourseConfirmModal(ctk.CTkToplevel):
         confirm_btn.pack(side="left", padx=(10, 0))
 
     def _on_confirm_click(self) -> None:
-        """확인 버튼 클릭 - 모달만 닫기 (기능 미구현)"""
+        """확인 버튼 클릭 - 강의 청취 시작"""
         self.result = True
         self.destroy()
+        if self.on_confirm:
+            self.on_confirm()
 
     def _on_cancel_click(self) -> None:
         """취소 버튼 클릭 - LMS 페이지로 이동"""

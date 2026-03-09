@@ -6,6 +6,26 @@ from bs4 import BeautifulSoup
 
 
 @dataclass
+class IndividualLecture:
+    """개별 강의 정보 (강의실 내 각 강의)"""
+
+    week: int  # 주차
+    session: int  # 차시 (강)
+    title: str  # 강의명
+    progress: int  # 진도율 (0-100)
+    duration: str  # 학습요구시간
+    is_completed: bool  # 청취 완료 여부
+    attendance_status: str  # 출석여부 (출석/미출석 등)
+    lecture_type: str  # 강의유형
+    can_play: bool  # 재생 가능 여부
+
+    @property
+    def is_incomplete(self) -> bool:
+        """미청취 강의인지 확인"""
+        return self.progress < 100 and self.can_play
+
+
+@dataclass
 class CourseInfo:
     """수강 과목 정보"""
 
@@ -191,3 +211,113 @@ class LMSParser:
     def get_courses(self) -> list[CourseInfo]:
         """파싱된 과목 목록 반환"""
         return self.courses
+
+
+class LectureRoomParser:
+    """강의실 페이지 파서 (개별 강의 목록 추출)"""
+
+    def __init__(self, html: str):
+        self.soup = BeautifulSoup(html, "lxml")
+        self.lectures: list[IndividualLecture] = []
+
+    def parse(self) -> list[IndividualLecture]:
+        """HTML에서 개별 강의 목록 추출"""
+        self.lectures = []
+        self._parse_lecture_list()
+        return self.lectures
+
+    def _parse_lecture_list(self) -> None:
+        """강의 목록 파싱"""
+        # SELECT_LEC_LIST 또는 SELECT_ATND 데이터에서 추출된 HTML 테이블 파싱
+        # 강의 테이블 찾기
+        lecture_tables = self.soup.select("table.lecture_table tbody tr")
+
+        for row in lecture_tables:
+            lecture = self._parse_lecture_row(row)
+            if lecture:
+                self.lectures.append(lecture)
+
+        # week_section 방식으로도 시도
+        if not self.lectures:
+            self._parse_week_sections()
+
+    def _parse_lecture_row(self, row) -> IndividualLecture | None:
+        """테이블 행에서 강의 정보 추출"""
+        try:
+            cells = row.find_all("td")
+            if len(cells) < 5:
+                return None
+
+            # 강 (차시)
+            session_text = cells[0].get_text(strip=True)
+            session = int(re.sub(r"[^0-9]", "", session_text) or 0)
+
+            # 강의유형
+            lecture_type = cells[1].get_text(strip=True) if len(cells) > 1 else ""
+
+            # 학습요구시간
+            duration = cells[2].get_text(strip=True) if len(cells) > 2 else ""
+
+            # 진도율
+            progress_text = cells[3].get_text(strip=True) if len(cells) > 3 else "0"
+            progress = int(re.sub(r"[^0-9]", "", progress_text) or 0)
+
+            # 출석여부
+            attendance = cells[4].get_text(strip=True) if len(cells) > 4 else ""
+
+            # 강의보기 버튼 확인
+            play_btn = row.select_one("button[onclick*='lectView']")
+            can_play = play_btn is not None
+
+            # onclick에서 주차 정보 추출
+            week = 0
+            if play_btn:
+                onclick = play_btn.get("onclick", "")
+                # lectView(주차, 차시) 패턴
+                match = re.search(r"lectView\s*\(\s*(\d+)", onclick)
+                if match:
+                    week = int(match.group(1))
+
+            return IndividualLecture(
+                week=week,
+                session=session,
+                title=f"{week}주차 {session}강",
+                progress=progress,
+                duration=duration,
+                is_completed=progress >= 100,
+                attendance_status=attendance,
+                lecture_type=lecture_type,
+                can_play=can_play,
+            )
+        except (ValueError, IndexError):
+            return None
+
+    def _parse_week_sections(self) -> None:
+        """week_section 구조에서 강의 목록 파싱"""
+        week_sections = self.soup.select("section.week_section")
+
+        for section in week_sections:
+            # 주차 제목에서 주차 번호 추출
+            week_title = section.select_one(".week_title")
+            week = 0
+            if week_title:
+                match = re.search(r"(\d+)\s*주차", week_title.get_text())
+                if match:
+                    week = int(match.group(1))
+
+            # 강의 행 파싱
+            rows = section.select("tbody tr")
+            for row in rows:
+                lecture = self._parse_lecture_row(row)
+                if lecture:
+                    lecture.week = week
+                    lecture.title = f"{week}주차 {lecture.session}강"
+                    self.lectures.append(lecture)
+
+    def get_incomplete_lectures(self) -> list[IndividualLecture]:
+        """미청취 강의만 반환"""
+        return [lec for lec in self.lectures if lec.is_incomplete]
+
+    def get_lectures_by_week(self, week: int) -> list[IndividualLecture]:
+        """특정 주차의 강의만 반환"""
+        return [lec for lec in self.lectures if lec.week == week]

@@ -323,7 +323,7 @@
      * @returns {Promise<Array>} 메뉴 데이터 배열이 포함된 Promise
      */
     async function initMenu() {
-        const isSessionIdSame = sessionStorage.getItem("sessionId") == "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMyMQ==";
+        const isSessionIdSame = sessionStorage.getItem("sessionId") == "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMxMQ==";
         if(!isSessionIdSame) {
             sessionStorage.clear();  
         }
@@ -336,7 +336,7 @@
         }
     }
     async function initFavMenu() {
-        const isSessionIdSame = sessionStorage.getItem("sessionId") == "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMyMQ==";
+        const isSessionIdSame = sessionStorage.getItem("sessionId") == "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMxMQ==";
         if(!isSessionIdSame) {
             sessionStorage.clear();  
         }
@@ -381,7 +381,7 @@
                         
                         sessionStorage.setItem("menuData", JSON.stringify(data.MENU_LIST));
                         sessionStorage.setItem("langData", JSON.stringify(data.LANG_LIST));
-                        sessionStorage.setItem("sessionId", "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMyMQ==");
+                        sessionStorage.setItem("sessionId", "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMxMQ==");
                         resolve(data.MENU_LIST);
                     } else {
                         
@@ -428,7 +428,7 @@
                     if(data.SUCCESS_YN == "Y") {
                         
                         sessionStorage.setItem("favMenuData", JSON.stringify(data.MENU_LIST));
-                        sessionStorage.setItem("sessionId", "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMyMQ==");
+                        sessionStorage.setItem("sessionId", "gbqjava61L1CAhiLW89AhLfvwHLmUiIAwHRR8WAmm9VDja3btBgOSEgvwDiXNPZV.UEJEVUxNUy9MTVMxMQ==");
                         resolve(data.MENU_LIST);
                     } else {
                         
@@ -872,8 +872,8 @@
     var localTimer;
     
     
-    var sessionExpireAt = 1773041465; // 세션 만료 시간
-    var serverNow = 1773039665; // 서버 현재 시간
+    var sessionExpireAt = 1773041530; // 세션 만료 시간
+    var serverNow = 1773039730; // 서버 현재 시간
     
     var timeOffset = Math.floor(Date.now() / 1000) - serverNow;
     
@@ -2040,7 +2040,7 @@
         
         
         
-        var jspPage = "/STUD/CLRO/A/STCRA020";
+        var jspPage = "/STUD/CLRO/A/STCRA020_03S";
         if(jspPage.indexOf("_MAIN") > -1){
             mainYn = "Y";
         }
@@ -2634,7 +2634,7 @@
     
     $(document).ready(async function() {
         
-        var jspPage = "/STUD/CLRO/A/STCRA020";
+        var jspPage = "/STUD/CLRO/A/STCRA020_03S";
         if(jspPage.indexOf("_MAIN") > -1){
             mainYn = "Y";
         }
@@ -3016,6 +3016,8 @@
 
 
 
+
+
     <script>
         var NO_DATA_FOUND = "field.msg.no_data";
         var PROCESS_DATA_LOAD = "field.msg.load_data";
@@ -3107,414 +3109,425 @@
 
 
 
+    
 
 
 
+<script src="/resources/js/tgplayer/componentRoot.js"></script>
+<script src="/resources/js/tgplayer/player_init.js"></script>
+<style>
+/* 자막 하이라이트 스타일 */
+.subtitle-highlight {
+    background-color: #f0f8ff !important; /* 원하는 하이라이트 색상 */
+    font-weight: bold;
+}
+
+.active {
+    font-size: var(--fs-md) !important;
+}
+
+/* AI TUTOR */
+  .iframe-wrapper {
+    width: 400px;
+    height: 800px;
+    border: 1px solid #d9d9d9;
+  }
+
+  #ai-tutor {
+    width: 100%;
+    height: 100%;
+  }
 
 
-
-
+</style>
+    
 <script>
     
     
     
     defColumns["default"] = [];
 reqColumns["default"] = [];
-hidColumns["default"] = [{name:'CURRPAGE', value:''},{name:'SAVEMODE', value:''},{name:'menuCd', value:''},{name:'jspPage', value:''},{name:'S_LEC_NO', value:''},{name:'S_WEEK', value:''},{name:'S_SESS', value:''},{name:'CT_ID', value:''}];
+hidColumns["default"] = [{name:'CURRPAGE', value:''},{name:'SAVEMODE', value:''},{name:'menuCd', value:''},{name:'jspPage', value:''},{name:'S_LEC_NO', value:''},{name:'S_WEEK', value:''},{name:'S_SESS', value:''},{name:'S_CH_NM', value:''}];
 defTable["default"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', sort:[],order:[]};
+;
+    defColumns["sbjt"] = [{name:'CH_NM', value:'주강', sortname:'주강', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'LEC_NM', value:'교과목명', sortname:'교과목명', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'TITLE', value:'강의명', sortname:'강의명', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'PROGRESS', value:'진도율', sortname:'진도율', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'USER_END_DT', value:'최종학습일', sortname:'최종학습일', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]}];
+reqColumns["sbjt"] = [];
+hidColumns["sbjt"] = [];
+defTable["sbjt"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', sort:[],order:[]};
+;
+    defColumns["tab1Sbjt"] = [{name:'LEC_NM', value:'교과목명', sortname:'교과목명', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'CLSS', value:'분반', sortname:'분반', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'PNT', value:'학점', sortname:'학점', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'OPEN_SHYR_NM', value:'학년', sortname:'학년', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'POBT_NM', value:'이수구분', sortname:'이수구분', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'KOR_SUST_NM', value:'학과', sortname:'학과', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'LEC_GOAL', value:'수업목표', sortname:'수업목표', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'LEC_INTRO', value:'수업개요', sortname:'수업개요', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'LEC_METHOD', value:'수업방법', sortname:'수업방법', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'LEC_EVL', value:'수업평가(%)', sortname:'수업평가(%)', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'APPR_MTHD_NM', value:'평가방식', sortname:'평가방식', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'REPORT_NAME', value:'리포트 주제', sortname:'리포트 주제', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'REPORT_SUBMIT_DT', value:'리포트 제출기간', sortname:'리포트 제출기간', disp:'', size:'0', colWidth:'', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]}];
+reqColumns["tab1Sbjt"] = [];
+hidColumns["tab1Sbjt"] = [];
+defTable["tab1Sbjt"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', sort:[],order:[]};
+;
+    defColumns["tab2Book"] = [{name:'TXB_CD_NM', value:'수업교재', sortname:'수업교재', disp:'', size:'0', colWidth:'20px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'AUTH', value:'저자', sortname:'저자', disp:'', size:'0', colWidth:'20px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'TXB_NM', value:'저서명', sortname:'저서명', disp:'', size:'0', colWidth:'50px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'PUBLR', value:'출판사', sortname:'출판사', disp:'', size:'0', colWidth:'50px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'ISSUE_YY', value:'발행연도', sortname:'발행연도', disp:'', size:'0', colWidth:'20px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'PRICE', value:'정가', sortname:'정가', disp:'', size:'0', colWidth:'20px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]}];
+reqColumns["tab2Book"] = [];
+hidColumns["tab2Book"] = [];
+defTable["tab2Book"] = {isEdit:false, rowNum:false, rowCheck:false, pkColumns:'', sort:[],order:[]};
+;
+    defColumns["tab2Site"] = [{name:'SITE_NM', value:'사이트 이름', sortname:'사이트 이름', disp:'', size:'0', colWidth:'20px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]},{name:'SITE_URL', value:'사이트 주소', sortname:'사이트 주소', disp:'', size:'0', colWidth:'20px', align:'Center', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'None',datatype:'String', extendScript:'', event:[]}];
+reqColumns["tab2Site"] = [];
+hidColumns["tab2Site"] = [];
+defTable["tab2Site"] = {isEdit:false, rowNum:false, rowCheck:false, pkColumns:'', sort:[],order:[]};
+;
+    defColumns["subtitle"] = [{name:'start', value:'시작시간', sortname:'시작시간', disp:'', size:'0', colWidth:'20px', align:'Left', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'Text',datatype:'String', extendScript:'', event:[{ name:'onChange', handler:'setTextReplace(this);'},{ name:'onFocus', handler:'this.select();'}]},{name:'end', value:'종료시간', sortname:'종료시간', disp:'', size:'0', colWidth:'20px', align:'Left', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'Text',datatype:'String', extendScript:'', event:[{ name:'onChange', handler:'setTextReplace(this);'},{ name:'onFocus', handler:'this.select();'}]},{name:'text', value:'자막내용', sortname:'자막내용', disp:'', size:'0', colWidth:'400px', align:'Left', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'TextArea',datatype:'String', extendScript:'', event:[], rows:200, cols:5},{name:'SUBTITLE', value:'다국어 자막내용', sortname:'다국어 자막내용', disp:'', size:'0', colWidth:'400px', align:'Left', excelOut:'true', isMerge:'false', maxlength:'0', classname:'', trueValue:'', falseValue:'', min:'0', max:'0', increment:'0', editable:'true', readonly:'false', coltype:'TextArea',datatype:'String', extendScript:'', event:[], rows:200, cols:5}];
+reqColumns["subtitle"] = [];
+hidColumns["subtitle"] = [];
+defTable["subtitle"] = {isEdit:true, rowNum:false, rowCheck:false, pkColumns:'id', sort:[],order:[]};
+;
+    defColumns["lecList"] = [];
+reqColumns["lecList"] = [];
+hidColumns["lecList"] = [{name:'LEC_NO', value:''},{name:'LEC_NM', value:''},{name:'YY', value:''},{name:'SHTM', value:''},{name:'SHTM_NM', value:''},{name:'PROF_NM', value:''}];
+defTable["lecList"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', sort:[],order:[]};
 ;
     
     
     
-    var nowYyShtmYn = "N"; 
+    var ctId = "";
+    var chId = 0;
+    var ctCd = "";
+    var gJsonLecInfo = [];
+    var gRsltSeq = 0; 
+    var gUserAtndChk = "";
+    var attndEventChk = "";
+    var dataYn = "";
+    var gIngYn = ""; 
+    var gUserTime = ""; 
+    //var userAllTime = "";
+    //var userLateTime = "";
+    var gAtndTime = 0; 
+    var popupTime = "";
+    var subtitleData;  
+    var videoPlayer;   
+    var currentSubtitleIndex = -1; 
+    var tableMinWidth = 0;
+    var playerConfig = {};
+    var bookmarkList = [];
     
+    var shregCd = "H51001";
+    const gRsltChkTime = 120000; 
+    
+    var contentLoadYn = "Y";
+    
+    
+    const aiTutor = document.getElementById("ai-tutor"); // 챗봇 iframe
+    const chatbotOrigin = "https://bdu.heymango.ai"; // 챗봇 origin(iframe태그의 src속성값과 동일)
     
     
     
     
     $(document).ready(function() {
-        setParamValue("default", "{menuCd=200022, jspPage=/STUD/CLRO/A/STCRA020, CURRPAGE=1, pageUnit=10, _csrf=fb4943d5-70aa-4808-86f4-9a9d761a2b6a}");
+        setParamValue("default", "{menuCd=200022, S_WEEK=0, CURRPAGE=1, SAVEMODE=, jspPage=/STUD/CLRO/A/STCRA020_03S, pageUnit=10, _csrf=fb4943d5-70aa-4808-86f4-9a9d761a2b6a, S_LEC_NO=GA29520120261, S_SESS=1, CT_ID=10002490}");
         initalizePage();
+
+//         $(document).on('click', '.lecture_list .week_header .toggle_btn', function (e) {
+//             e.preventDefault();
+//             var $weekItem = $(this).closest('.week_item');
+//             var $lectureDetail = $weekItem.find('.lecture_detail');
+
+//             if ($weekItem.hasClass('open')) {
+//                 $weekItem.removeClass('open');
+//                 $lectureDetail.slideUp(200);
+//                 $(this).html('<span class="icon_btn_open"></span>').attr('aria-label', '주차 열기');
+//             } else {
+
+//                 $weekItem.siblings('.week_item').removeClass('open').find('.lecture_detail').slideUp(200);
+//                 $weekItem.addClass('open');
+//                 $lectureDetail.slideDown(200);
+//                 $(this).html('<span class="icon_btn_close"></span>').attr('aria-label', '주차 닫기');
+//             }
+//         });
+        $(document).on('click', '.lecture_list .week_header .toggle_btn', function (e) {
+            e.preventDefault();
+            var $weekItem = $(this).closest('.week_item');
+            var $lectureDetail = $weekItem.find('.lecture_detail');
         
-        //$("#divLecListWeek").hide();
+            
+            $('.lecture_list .week_header .toggle_btn').html('<span class="icon_btn_open"></span>').attr('aria-label', '주차 열기');
+            if($weekItem.hasClass('open')){
+                
+                $weekItem.removeClass('open');
+                $lectureDetail.slideUp(200);
+            }else{
+                
+                $weekItem.siblings('.week_item').removeClass('open').find('.lecture_detail').slideUp(200);
+                
+                $weekItem.addClass('open');
+                $lectureDetail.slideDown(200);
+                
+                $(this).html('<span class="icon_btn_close"></span>').attr('aria-label', '주차 닫기');
+            }
+        });
+        
+        
+        window.addEventListener("message", (event) => {
+            // 챗봇으로부터 준비되었다는 메시지를 수신한 경우 챗봇으로 데이터가 담긴 메시지 전송
+            if (event.origin === chatbotOrigin) {
+                if (event.data?.type === "AI_TUTOR_READY") {
+                    console.log("AI_TUTOR_READY");
+                    const payload = {
+                        type: "AI_TUTOR_PAYLOAD",
+                        data: {
+                            userId: "20231038",
+                            classId: "GA29520120261",
+                            week: "0",
+                            lecture: "1", 
+                            lang : "ko"
+                        }
+                    };
+
+                    $("#ai-tutor")[0].contentWindow.postMessage(payload, chatbotOrigin);
+                }
+            }
+        });
+        
     });
     
     
     function initalizePage() {
-        showLoading();
-
         var requestPacket = new RequestPacket("sqlSession");
+
         
-        requestPacket.addService("SELECT_WEEK","mXSqPKkv9N2ChZ58Y3rC9qM3c52WdJ0X0q/K3sopYMA=","SELECT");
-        requestPacket.getService(requestPacket.length()-1).setParam("USER_ID", "20231038");
+        requestPacket.addService("SELECT_SBJT","Bt/37YyQ4BcqRaSh5PNT0gocf01KcreIrF77vXUFvPM=","SELECT");
         requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+        
+        
+        requestPacket.addService("SELECT_CONT_INFO","T9sJd5WIchbqjTkNaQZbECdaxBco9dnxJdkvwGgeXJQ=","SELECTMAP");
+        requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO", "0");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1");
+        requestPacket.getService(requestPacket.length() - 1).setGiveParam("CT_ID");
+        requestPacket.getService(requestPacket.length() - 1).setGiveParam("CH_ID");
+        
+        
+        requestPacket.addService("SELECT_BOOKMARK","lR3PSzqfbmmMUIbTRyD2afDBDW6FqXg+WVotNMnG2JA=","SELECT");
+        requestPacket.getService(requestPacket.length()-1).setParam("LEC_NO", "GA29520120261");
+        requestPacket.getService(requestPacket.length() - 1).setTakeParam("CT_ID");
+        requestPacket.getService(requestPacket.length() - 1).setTakeParam("CH_ID");
+        requestPacket.getService(requestPacket.length()-1).setParam("USER_ID", "20231038");
+        
+        
+        
+        
+        
+        requestPacket.addService("SELECT_LEC_INFO","c47XYLONlM8DKSV6zG6SMymZxGLSul6fVMrvQiclVhE=","SELECT");
+        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
+        requestPacket.getService(requestPacket.length() - 1).setParam("CH_TIME_NO", "0");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1");
+        //requestPacket.getService(requestPacket.length() - 1).setGiveParam("CT_ID");
+        //requestPacket.getService(requestPacket.length() - 1).setGiveParam("CH_ID");
+        
+        
+        
+        
+        
+        requestPacket.addService("SELECT_RSLT_INFO","j0g3sErmyE0vAd4NrjCArvWQXFwSWl8fUrdqriB3LN0=","SELECT");
+        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
+        requestPacket.getService(requestPacket.length() - 1).setParam("CH_TIME_NO", "0");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1");
+        
+        
+        requestPacket.addService("SELECT_ATND_RATE","3bVFNdtrNvpNnHPx2HMsYal+yuWQh+c5Fw53zWASGq0=","SELECT");
+        requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length()-1).setParam("CURR_WEEK_YN", "Y");
+        
         
         requestPacket.addService("SELECT_ATND","j0g3sErmyE0vAd4NrjCArlR8xPPnXWJH5ikGWYBNnX0=","SELECT");
         requestPacket.getService(requestPacket.length()-1).setParam("USER_ID", "20231038");
         requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
         
-        requestPacket.addService("SELECT_LEC_LIST","c47XYLONlM8DKSV6zG6SMymZxGLSul6fVMrvQiclVhE=","SELECT");
-        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
-        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
         
-        requestPacket.addService("SELECT_NOW_YY_SHTM_YN","UpZj9kzh597IIA4hlAbnUgJbRLwuJDZesNnDCRewJS0=","SELECT");
-        requestPacket.getService(requestPacket.length() - 1).setParam("LEC_NO", "GA29520120261");
-        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
+        requestPacket.addService("SELECT_LECT","3OcavMY0OjNx34kvNp7a8nzkb/skT0wGF9gIFk3LoWNv8f/mmxylePSH27ow1Adp","SELECT");
+        requestPacket.getService(requestPacket.length()-1).setParam("YY", "2026");
+        requestPacket.getService(requestPacket.length()-1).setParam("SHTM", "1");
+        requestPacket.getService(requestPacket.length()-1).setParam("USER_ID", "20231038");
         
         
         selectService(requestPacket.paramJson(), selectInitSuccessEvent);
     }
-
+    
     
     function selectInitSuccessEvent(data) {
         hideLoading();
-        //var rowWeeks = data.SELECT_WEEK;
+        
+        gJsonLecInfo = data.SELECT_SBJT;
+        
+        ctId = data.SELECT_CONT_INFO["CT_ID"];
+        chId = data.SELECT_CONT_INFO["CH_ID"];
+        popupTime = data.SELECT_CONT_INFO["NANSU"] * 1000 * 60;
         
         
-        if(data.SELECT_NOW_YY_SHTM_YN.length > 0){
-            nowYyShtmYn = data.SELECT_NOW_YY_SHTM_YN[0].NOW_YY_SHTM_YN;
-        }
+        /*
+        attndChk = data.SELECT_RSLT_INFO[0].USER_ATND_CHKYN;
+        dataYn = data.SELECT_RSLT_INFO[0].DATA_YN;
+        ingYn = data.SELECT_RSLT_INFO[0].ING_YN;
+        userTime = data.SELECT_RSLT_INFO[0].USER_TIME;
+        userAllTime = data.SELECT_RSLT_INFO[0].USER_ALL_TIME;
+        userLateTime = data.SELECT_RSLT_INFO[0].USER_LATE_TIME;
+        */
+        dataYn = data.SELECT_LEC_INFO[0].DATA_YN;
+        gIngYn = data.SELECT_LEC_INFO[0].ING_YN;
+        gUserAtndChk = data.SELECT_LEC_INFO[0].USER_ATND_CHKYN;
+        gUserTime = data.SELECT_LEC_INFO[0].USER_TIME;
+        //userAllTime = data.SELECT_LEC_INFO[0].USER_ALL_TIME;
+        //userLateTime = data.SELECT_LEC_INFO[0].USER_TIME;
+        gAtndTime = data.SELECT_LEC_INFO[0].CH_TIME;
         
-        $("#CT_ID").val(data.SELECT_LEC_LIST[0].CT_ID);
+        //rangeYn = data.SELECT_YY_SHTM_YN.RANGE_YN;
         
-        var strCurWeek = "ALL";
-        var strStartDt = "";
-        var strEndDt = "";
-        var curFlag = false;
+        $("#CT_ID").val(ctId);
+        $("#CH_ID").val(chId);
         
-        var htmlWeekStr = "<button id='btn_ALL' type='button' class='week_btn' onclick=\"weekClickEvent('ALL')\" >전체보기 <span></span></button>";
-        for(var i = 0; i < data.SELECT_WEEK.length; i++) {
-            
-            if("H51001" == "H51009"){
-                
-                if(i == 0){
-                    var itemWeek = data.SELECT_WEEK[i];
-                    
-                    htmlWeekStr += "<button id='btn_" + itemWeek.CH_TIME_NO +"' type='button' class='week_btn' onclick=\"javascript:weekClickEvent('" + itemWeek.CH_TIME_NO + "', '" + itemWeek.START_DT + "','" + itemWeek.END_DT + "')\">" + itemWeek.CH_TIME_NO + "주차 ";
-                    if(itemWeek.ATND_YN == "Y"){
-                        //htmlWeekStr += "<span class='status status_done'>완료</span></button>";
-                        if(!curFlag){
-                            strCurWeek = itemWeek.CH_TIME_NO;
-                            strStartDt = itemWeek.START_DT;
-                            strEndDt = itemWeek.END_DT;
-                        }
-                    }else{
-                        //htmlWeekStr += "<span class='status status_ing'>진행중</span></button>";
-                        if(!curFlag){
-                            strCurWeek = itemWeek.CH_TIME_NO;
-                            strStartDt = itemWeek.START_DT;
-                            strEndDt = itemWeek.END_DT;
-                            curFlag = true;
-                        }
-                    }
-                }
-            }else{
-                var itemWeek = data.SELECT_WEEK[i];
-                if(itemWeek.ING_YN == "F"){
-                    //htmlWeekStr += "<button id='btn_" + itemWeek.CH_TIME_NO +"' type='button' class='week_btn done' onclick='weekClickEvent(&#39;" + itemWeek.CH_TIME_NO + "&#39;)'>" + itemWeek.CH_TIME_NO + "주차";
-                    htmlWeekStr += "<button id='btn_" + itemWeek.CH_TIME_NO +"' type='button' class='week_btn done' onclick=\"javascript:weekClickEvent('" + itemWeek.CH_TIME_NO + "', '" + itemWeek.START_DT + "','" + itemWeek.END_DT + "')\">" + itemWeek.CH_TIME_NO + "주차";
-                    if(itemWeek.ATND_YN == "Y"){
-                        htmlWeekStr += "<span class='status status_done'>완료</span></button>";
-                    }else{
-                        htmlWeekStr += "<span class='status status_ing'>진행중</span></button>";
-                    }
-                } else if(itemWeek.ING_YN == "Y"){
-                    htmlWeekStr += "<button id='btn_" + itemWeek.CH_TIME_NO +"' type='button' class='week_btn' onclick=\"javascript:weekClickEvent('" + itemWeek.CH_TIME_NO + "', '" + itemWeek.START_DT + "','" + itemWeek.END_DT + "')\">" + itemWeek.CH_TIME_NO + "주차 ";
-                    if(itemWeek.ATND_YN == "Y"){
-                        htmlWeekStr += "<span class='status status_done'>완료</span></button>";
-                        if(!curFlag){
-                            strCurWeek = itemWeek.CH_TIME_NO;
-                            strStartDt = itemWeek.START_DT;
-                            strEndDt = itemWeek.END_DT;
-                        }
-                    }else{
-                        htmlWeekStr += "<span class='status status_ing'>진행중</span></button>";
-                        if(!curFlag){
-                            strCurWeek = itemWeek.CH_TIME_NO;
-                            strStartDt = itemWeek.START_DT;
-                            strEndDt = itemWeek.END_DT;
-                            curFlag = true;
-                        }
-                    }
-                }else if(itemWeek.ING_YN == "N"){
-                    htmlWeekStr += "<button id='btn_" + itemWeek.CH_TIME_NO +"' type='button' class='week_btn notyet' onclick=\"javascript:weekClickEvent('" + itemWeek.CH_TIME_NO + "', '" + itemWeek.START_DT + "','" + itemWeek.END_DT + "')\">" + itemWeek.CH_TIME_NO + "주차 <span class='status status_undo'>미진행</span></button>";
-                }
+        ctCd = data.SELECT_CONT_INFO["CONT_CD"];
+        
+        if(data.SELECT_BOOKMARK && data.SELECT_BOOKMARK.length > 0) {
+            for(i = 0; i < data.SELECT_BOOKMARK.length; i++) {
+                var item = data.SELECT_BOOKMARK[i];
+                bookmarkList.push({
+                    time: item.VIDO_TM,
+                    text: item.BKMK_NM
+                });
             }
         }
-        $("#btnWeeks").html(htmlWeekStr);
-        //$("#btn_"+strCurWeek).trigger("click");
         
-        const weekButtons = document.querySelectorAll('.week_btn');
-        weekButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // 모든 버튼 초기화
-                weekButtons.forEach(b => {
-                  b.classList.remove('current');
-                  b.removeAttribute('aria-current');
-                  if (b.hasAttribute('aria-label')) {
-                    b.setAttribute('aria-label', b.innerText.trim().replace(', 현재 선택됨',''));
-                  }
-                });
+        setDataBinding("sbjt", data.SELECT_LEC_INFO[0]);
+        setDataBinding("tab1Sbjt", data.SELECT_SBJT[0]);
+        $("#S_CH_NM").val(data.SELECT_LEC_INFO[0].CH_NM);
 
-                // 클릭한 버튼 활성화
-                btn.classList.add('current');
-                btn.setAttribute('aria-current', 'true');
-                btn.setAttribute('aria-label', btn.innerText.trim() + ', 현재 선택됨');
-              });
-        });
         
-        
-        const btnWeekObjt = document.querySelector("#btn_"+strCurWeek);
-        btnWeekObjt.scrollIntoView({ inline: 'center', behavior: 'smooth' });
-        $("#btn_"+strCurWeek).trigger("click");
-        weekClickEvent(strCurWeek, strStartDt, strEndDt);
-        
-    }
-
-    
-    function weekClickEvent(strWeek, strStartDt, strEndDt){
-        $("#divLecList").empty();
-        if(strWeek == "ALL"){
-            //$("#divLecListAll").show();
-            //$("#divLecListWeek").hide();
-            
-            loadListAll();
-        }else{
-            //$("#divLecListAll").hide();
-            //$("#divLecListWeek").show();
-            loadListWeek(strWeek, strStartDt, strEndDt);
+        var htmlStrProg = "";
+        if(data.SELECT_ATND_RATE && data.SELECT_ATND_RATE.length > 0) {
+            var item = data.SELECT_ATND_RATE[0];
+            htmlStrProg += "<span class='label'>출석률</span>";
+            htmlStrProg += "<div class='progress'>";
+            htmlStrProg += "<div class='progress_bar' style='width:" + item.ATND_RATE + "%'></div>";
+            htmlStrProg += "</div>";
+            htmlStrProg += "<span class='value'>" + item.ATND_RATE + "%</span>";
+            $("#divNowWeekProg").html(htmlStrProg);
         }
-    }
-    
-    function loadListAll() {
-        showLoading();
-
-        var requestPacket = new RequestPacket("sqlSession");
         
-        requestPacket.addService("SELECT_LEC_LIST","c47XYLONlM8DKSV6zG6SMymZxGLSul6fVMrvQiclVhE=","SELECT");
-        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
-        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
-        
-        
-        requestPacket.addService("SELECT_ACT_STATUS","sz/cxSQ69XJ3yLVdKD3shOmo13QRk3CLPPqhCkfgpEw=","SELECT");
-        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
-        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
-        
-        
-        requestPacket.addService("SELECT_EXAM","T9sJd5WIchbqjTkNaQZbEIHJoE/hHeNfaJxYqrTHFoo=","SELECT");
-        requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
-        selectService(requestPacket.paramJson(), selectLoadListAllSuccessEvent);
-    }
-    
-    
-    function selectLoadListAllSuccessEvent(data) {
-        var list = data.SELECT_LEC_LIST;
-        var act = data.SELECT_ACT_STATUS;
-        var htmlStr = "";
-
-        if(list && list.length > 0) {
-            var weekMap = {};
-            list.forEach(function(item){
-                if(!weekMap[item.CH_TIME_NO]){
-                    weekMap[item.CH_TIME_NO] = [];
-                }
-                weekMap[item.CH_TIME_NO].push(item);
-            });
-
-            Object.keys(weekMap).forEach(function(weekNo){
-                var lec = weekMap[weekNo];
+        var htmlStrProg = "";
+        if(data.SELECT_ATND && data.SELECT_ATND.length > 0) {
+            var strChTimeNo = -1;
+            for(i = 0; i < data.SELECT_ATND.length; i++) {
+                var item = data.SELECT_ATND[i];
+                var strCssClass = "black";
+//                 var strCssClass = "blue";
+                
+//                 if(item.ATND_YN == "Y"){
+//                     strCssClass = "black";
+//                 }
                 
                 
-                if("H51001" == "H51009"){
-                    
-                    if(weekNo == 0){
-                        var weekAct = act.find(function(a){
-                            return a.START_DT == lec[0].START_DT && a.END_DT == lec[0].END_DT;
-                        });
-                        
-                        htmlStr += "<section class='week_section'>";
-                        htmlStr += "    <h5 class='week_title'>" + weekNo + "주차 <span>" + lec[0].ATND_PERIOD + "(출석인정기간)</span></h5>";
-                        htmlStr += "    <div class='table-wrapper'>";
-                        htmlStr += "        <table class='table_base lecture_table'>";
-                        htmlStr += "            <thead>";
-                        htmlStr += "                <tr>";
-                        htmlStr += "                    <th>강</th><th>강의유형</th><th>학습요구시간</th><th>진도율</th><th>출석여부</th>";
-                        htmlStr += "                    <th>강의보기</th><th>강의노트</th><th>퀴즈</th><th>리포트</th><th>토론</th><th>공지</th>";
-                        htmlStr += "                </tr>";
-                        htmlStr += "            </thead>";
-                        htmlStr += "            <tbody>";
-        
-                        lec.forEach(function(item, idx){
-                            var btnText = item.PROGRESS == "100%" ? "다시보기" : "강의듣기";
-                            htmlStr += "                <tr>";
-                            htmlStr += "                    <td data-label='강'>" + item.CH_TIME_NO_DIST + "</td>";
-                            htmlStr += "                    <td data-label='강의유형'>" + item.CONT_TYPE_NM + "</td>";
-                            htmlStr += "                    <td data-label='학습요구시간'>" + item.CH_TIME + "</td>";
-                            htmlStr += "                    <td data-label='진도율'>" + item.PROGRESS + "</td>";
-                            htmlStr += "                    <td data-label='출석여부'>" + item.USER_ATND_NM + "</td>";
-                            if(item.MEETING_YN == "N"){
-//                                 if(item.START_YN == "Y"){
-                                    htmlStr += "            <td data-label='강의보기'><button type='button' class='btn_line btn_primary' onclick='lectView(" + weekNo + ", " + item.CH_TIME_NO_DIST + ")'>" + btnText + "</button></td>";
-//                                 }else{
-//                                     htmlStr += "            <td data-label='강의보기'></td>";
-//                                 }
+                if(shregCd == "H51009"){
+                    if(item.CH_TIME_NO == "0"){
+                        if(strChTimeNo != item.CH_TIME_NO){
+                            if(strChTimeNo > -1){
+                                htmlStrProg += "    </div>";
+                                htmlStrProg += "</div>";
+                            }
+                            htmlStrProg += "<div class='week_item'>";
+                            htmlStrProg += "    <div class='week_header'>";
+                            if(item.ING_YN == "Y"){
+                                htmlStrProg += "        <span class='week_title danger'>" + item.CH_TIME_NO + "주차 (" + item.WEEK_PROGRESS + "%)</span>";
                             }else{
-                                if(item.MEETING_END_YN == "N"){
-                                    htmlStr += "            <td data-label='강의보기'><button type='button' class='btn_line btn_primary' onclick='zoomMeetingView(&#39;" + item.GUEST_URL + "&#39;)'>화상강의</button> </td>";
-                                }else{
-                                    htmlStr += "            <td data-label='강의보기'><button type='button' class='btn_line btn_primary' onclick='lectView(" + weekNo + ", " + item.CH_TIME_NO_DIST + ")'>" + btnText + "</button></td>";
-                                }
+                                htmlStrProg += "        <span class='week_title'>" + item.CH_TIME_NO + "주차 (" + item.WEEK_PROGRESS + "%)</span>";
                             }
-                            if(item.CH_TIME_NO != 0) {
-                                htmlStr += "                <td data-label='강의노트'><button type='button' class='btn_line' onclick=\"javascript:lectNoteDown('" + item.LEC_NM + "', '" + item.CT_ID + "', '" + item.CH_TIME_NO + "', '" + item.CH_TIME_NO_DIST + "')\">강의노트</button></td>";
-                            } else {
-                                htmlStr += "                <td></td>";
-                            }
-                            
-        
-                            if(idx == 0){
-                                htmlStr += "                    <td data-label='퀴즈' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_QUIZ + "/" + weekAct.TOT_QUIZ : "0/0") + "</td>";
-                                htmlStr += "                    <td data-label='리포트' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_REPORT + "/" + weekAct.TOT_REPORT : "0/0") + "</td>";
-                                htmlStr += "                    <td data-label='토론' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_DISCUSS + "/" + weekAct.TOT_DISCUSS : "0/0") + "</td>";
-                                htmlStr += "                    <td data-label='공지' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_NOTICE + "/" + weekAct.TOT_NOTICE : "0/0") + "</td>";
-                            }
-        
-                            htmlStr += "                </tr>";
-                        });
-        
-                        htmlStr += "            </tbody>";
-                        htmlStr += "        </table>";
-        
-                        // webHBox
-                        htmlStr += "        <dl class='webHBox'>";
-                        htmlStr += "            <div><dt>퀴즈</dt><dd>" + (weekAct ? weekAct.FIN_QUIZ + "/" + weekAct.TOT_QUIZ : "0/0") + "</dd></div>";
-                        htmlStr += "            <div><dt>리포트</dt><dd>" + (weekAct ? weekAct.FIN_REPORT + "/" + weekAct.TOT_REPORT : "0/0") + "</dd></div>";
-                        htmlStr += "            <div><dt>토론</dt><dd>" + (weekAct ? weekAct.FIN_DISCUSS + "/" + weekAct.TOT_DISCUSS : "0/0") + "</dd></div>";
-                        htmlStr += "            <div><dt>공지</dt><dd>" + (weekAct ? weekAct.FIN_NOTICE + "/" + weekAct.TOT_NOTICE : "0/0") + "</dd></div>";
-                        htmlStr += "        </dl>";
-        
-                        htmlStr += "    </div>";
-                        htmlStr += "</section>";
+                            htmlStrProg += "        <span class='week_period'>출석인정기간 : " + item.ATND_DT + "</span>";
+                            htmlStrProg += "        <button id='btnLect_" + item.CH_TIME_NO + "' class='toggle_btn' aria-label='주차 접기/펼치기'><span class='icon_btn_open'></span></button>";
+                            htmlStrProg += "    </div>";
+                            htmlStrProg += "    <div class='lecture_detail' style='display: none;'>";
+                        }
+                        htmlStrProg += "        <div class='lecture_item'>";
+                        if($("#S_WEEK").val() == item.CH_TIME_NO && $("#S_SESS").val() == item.CH_TIME_NO_DIST){
+                            htmlStrProg += "          <span class='lecture_name'>" + item.CH_TIME_NO_DIST +"강</span>";
+                        }else{
+                            htmlStrProg += "          <span class='lecture_name' style='cursor:pointer' onclick='clickClassBtn(&#39;L&#39;, &#39;" + item.CH_TIME_NO + "&#39;, &#39;" + item.CH_TIME_NO_DIST + "&#39;," + JSON.stringify(gJsonLecInfo[0]) + ");'>" + item.CH_TIME_NO_DIST +"강</span>";
+                        }
+                        htmlStrProg += "          <div class='progress'><div class='progress-fill " + strCssClass + "' style='width:" + item.CHASI_PROGRESS + "%'></div></div>";
+                        htmlStrProg += "          <span class='percent'>" + item.CHASI_PROGRESS + "%</span>";
+                        htmlStrProg += "        </div>";
                     }
                 }else{
-                    var weekAct = act.find(function(a){
-                        return a.START_DT == lec[0].START_DT && a.END_DT == lec[0].END_DT;
-                    });
-                    
-                    htmlStr += "<section class='week_section'>";
-                    htmlStr += "    <h5 class='week_title'>" + weekNo + "주차 <span>" + lec[0].ATND_PERIOD + "(출석인정기간)</span></h5>";
-                    htmlStr += "    <div class='table-wrapper'>";
-                    htmlStr += "        <table class='table_base lecture_table'>";
-                    htmlStr += "            <thead>";
-                    htmlStr += "                <tr>";
-                    htmlStr += "                    <th>강</th><th>강의유형</th><th>학습요구시간</th><th>진도율</th><th>출석여부</th>";
-                    htmlStr += "                    <th>강의보기</th><th>강의노트</th><th>퀴즈</th><th>리포트</th><th>토론</th><th>공지</th>";
-                    htmlStr += "                </tr>";
-                    htmlStr += "            </thead>";
-                    htmlStr += "            <tbody>";
-    
-                    lec.forEach(function(item, idx){
-                        var btnText = item.PROGRESS == "100" ? "다시보기" : "강의듣기";
-                        
-                        htmlStr += "                <tr>";
-                        htmlStr += "                    <td data-label='강'>" + item.CH_TIME_NO_DIST + "</td>";
-                        htmlStr += "                    <td data-label='강의유형'>" + item.CONT_TYPE_NM + "</td>";
-                        htmlStr += "                    <td data-label='학습요구시간'>" + item.CH_TIME + "</td>";
-                        htmlStr += "                    <td data-label='진도율'>" + item.PROGRESS + "</td>";
-                        htmlStr += "                    <td data-label='출석여부'>" + item.USER_ATND_NM + "</td>";
-                        
-                        if(item.MEETING_YN == "N"){
-                            if(item.START_YN == "Y"){
-                                htmlStr += "            <td data-label='강의보기'><button type='button' class='btn_line btn_primary' onclick='lectView(" + weekNo + ", " + item.CH_TIME_NO_DIST + ")'>" + btnText + "</button></td>";
-                            }else{
-                                htmlStr += "            <td data-label='강의보기'></td>";
-                            }
+                    if(strChTimeNo != item.CH_TIME_NO){
+                        if(strChTimeNo > -1){
+                            htmlStrProg += "    </div>";
+                            htmlStrProg += "</div>";
+                        }
+                        htmlStrProg += "<div class='week_item'>";
+                        htmlStrProg += "    <div class='week_header'>";
+                        if(item.ING_YN == "Y"){
+                            htmlStrProg += "        <span class='week_title danger'>" + item.CH_TIME_NO + "주차 (" + item.WEEK_PROGRESS + "%)</span>";
                         }else{
-                            if(item.MEETING_END_YN == "N"){
-                                htmlStr += "            <td data-label='강의보기'><button type='button' class='btn_line btn_primary' onclick='zoomMeetingView(&#39;" + item.GUEST_URL + "&#39;)'>화상강의</button> </td>";
-                            }else{
-                                htmlStr += "            <td data-label='강의보기'><button type='button' class='btn_line btn_primary' onclick='lectView(" + weekNo + ", " + item.CH_TIME_NO_DIST + ")'>" + btnText + "</button></td>";
-                            }
+                            htmlStrProg += "        <span class='week_title'>" + item.CH_TIME_NO + "주차 (" + item.WEEK_PROGRESS + "%)</span>";
                         }
-                        htmlStr += "                    <td data-label='강의노트'><button type='button' class='btn_line' onclick=\"javascript:lectNoteDown('" + item.LEC_NM + "', '" + item.CT_ID + "', '" + item.CH_TIME_NO + "', '" + item.CH_TIME_NO_DIST + "')\">강의노트</button></td>";
-    
-                        if(idx == 0){
-                            htmlStr += "                    <td data-label='퀴즈' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_QUIZ + "/" + weekAct.TOT_QUIZ : "0/0") + "</td>";
-                            htmlStr += "                    <td data-label='리포트' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_REPORT + "/" + weekAct.TOT_REPORT : "0/0") + "</td>";
-                            htmlStr += "                    <td data-label='토론' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_DISCUSS + "/" + weekAct.TOT_DISCUSS : "0/0") + "</td>";
-                            htmlStr += "                    <td data-label='공지' rowspan='" + lec.length + "' class='mobH'>" + (weekAct ? weekAct.FIN_NOTICE + "/" + weekAct.TOT_NOTICE : "0/0") + "</td>";
-                        }
-    
-                        htmlStr += "                </tr>";
-                    });
-    
-                    htmlStr += "            </tbody>";
-                    htmlStr += "        </table>";
-    
-                    // webHBox
-                    htmlStr += "        <dl class='webHBox'>";
-                    htmlStr += "            <div><dt>시험/퀴즈</dt><dd>" + (weekAct ? weekAct.FIN_QUIZ + "/" + weekAct.TOT_QUIZ : "0/0") + "</dd></div>";
-                    htmlStr += "            <div><dt>리포트</dt><dd>" + (weekAct ? weekAct.FIN_REPORT + "/" + weekAct.TOT_REPORT : "0/0") + "</dd></div>";
-                    htmlStr += "            <div><dt>토론</dt><dd>" + (weekAct ? weekAct.FIN_DISCUSS + "/" + weekAct.TOT_DISCUSS : "0/0") + "</dd></div>";
-                    htmlStr += "            <div><dt>공지</dt><dd>" + (weekAct ? weekAct.FIN_NOTICE + "/" + weekAct.TOT_NOTICE : "0/0") + "</dd></div>";
-                    htmlStr += "        </dl>";
-    
-                    htmlStr += "    </div>";
-                    htmlStr += "</section>";
+                        htmlStrProg += "        <span class='week_period'>출석인정기간 : " + item.ATND_DT + "</span>";
+                        htmlStrProg += "        <button id='btnLect_" + item.CH_TIME_NO + "' class='toggle_btn' aria-label='주차 접기/펼치기'><span class='icon_btn_open'></span></button>";
+                        htmlStrProg += "    </div>";
+                        htmlStrProg += "    <div class='lecture_detail' style='display: none;'>";
+                    }
+                    htmlStrProg += "        <div class='lecture_item'>";
+                    if($("#S_WEEK").val() == item.CH_TIME_NO && $("#S_SESS").val() == item.CH_TIME_NO_DIST){
+                    	htmlStrProg += "          <span class='lecture_name'>" + item.CH_TIME_NO_DIST +"강</span>";
+                    }else{
+                        htmlStrProg += "          <span class='lecture_name' style='cursor:pointer' onclick='clickClassBtn(&#39;L&#39;, &#39;" + item.CH_TIME_NO + "&#39;, &#39;" + item.CH_TIME_NO_DIST + "&#39;," + JSON.stringify(gJsonLecInfo[0]) + ");'>" + item.CH_TIME_NO_DIST +"강</span>";
+                    }
+                    htmlStrProg += "          <div class='progress'><div class='progress-fill " + strCssClass + "' style='width:" + item.CHASI_PROGRESS + "%'></div></div>";
+                    htmlStrProg += "          <span class='percent'>" + item.CHASI_PROGRESS + "%</span>";
+                    htmlStrProg += "        </div>";
                 }
+                
+                
+                strChTimeNo = item.CH_TIME_NO;
+            }
+            htmlStrProg += "    </div>";
+            htmlStrProg += "</div>";
+        }
+        $("#divLecList").html(htmlStrProg);
+        $("#btnLect_" + "0").trigger("click");
+        
+        
+        var htmlStrLec = "";
+        var lastLecNo = "";
+        if (data.SELECT_LECT && data.SELECT_LECT.length > 0) {
+            for (var i = 0; i < data.SELECT_LECT.length; i++) {
+                var item = data.SELECT_LECT[i];
+                if (item.LEC_NO !== lastLecNo) {
+                    htmlStrLec += "<li class='course_item'>";
+                    htmlStrLec += "    <a href='javascript:void(0)' class='course_name' onclick='clickBtn(\""  + item.LEC_NO + "\", \"" + item.LEC_NM + "\", \"" + item.YY + "\", \"" + item.SHTM + "\", \"" + item.SHTM_NM + "\", \"" + item.PROF_NM + "\", \"" + item.CLSS + "\", \"" + item.CH_TIME_NO + "\", \"" + item.CH_TIME_NO_DIST + "\", \"" + item.PROF_ID + "\")'>" + item.LEC_NM + "</a>";
+                    htmlStrLec += "</li>";
+                    lastLecNo = item.LEC_NO;
+                }
+            }
+            $("#tab2_group2 .course_list").html(htmlStrLec);
+        }
 
+        setBookDataGrid();
+        setRefSiteDataGrid();
+        
+        if (gUserAtndChk == "N" && gUserTime > 0) {
+            confirmBox("강의를 이어듣기 하시겠습니까?", function() {
+                /*
+            	console.log(gUserTime);
+                console.log(userLateTime);
+                if (ingYn == "Y" && userTime && userTime > 0) {
+                    startTime = userTime;
+                } else if(ingYn != "Y" && userLateTime && userLateTime > 0) {
+                    startTime = userLateTime;
+                }
+                */
+                startTime = gUserTime;
+                loadVideo();
+            }, null, function() { 
+                startTime = 0;
+                loadVideo();
             });
         } else {
-            htmlStr = "<tr><td colspan='11' style='text-align:center;'>강의가 없습니다.</td></tr>";
+            startTime = 0;
+            loadVideo();
         }
-
-        $("#divLecList").html(htmlStr);
-        
-        hideLoading();
-    }
-    
-    
-    function loadListWeek(week, strStartDt, strEndDt){
-        showLoading();
-        var requestPacket = new RequestPacket("sqlSession");
-        
-        requestPacket.addService("SELECT_LEC_INFO","c47XYLONlM8DKSV6zG6SMymZxGLSul6fVMrvQiclVhE=","SELECT");
-        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
-        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
-        requestPacket.getService(requestPacket.length() - 1).setParam("CH_TIME_NO", week);
-        
-        
-        requestPacket.addService("SELECT_ACT","sz/cxSQ69XJ3yLVdKD3shDCwG1iQYV7G8ECW3+vH+Z8=","SELECT");
-        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
-        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
-        requestPacket.getService(requestPacket.length() - 1).setParam("START_DT", strStartDt);
-        requestPacket.getService(requestPacket.length() - 1).setParam("END_DT", strEndDt);
-
-        
-        requestPacket.addService("SELECT_NOTICE","3OcavMY0OjNx34kvNp7a8t/UngnSSf1SR7p4UdXStAQ=","SELECT");
-        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
-        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
-        requestPacket.getService(requestPacket.length() - 1).setParam("START_DT", strStartDt);
-        requestPacket.getService(requestPacket.length() - 1).setParam("END_DT", strEndDt);
-        
-        
-        requestPacket.addService("SELECT_EXAM","T9sJd5WIchbqjTkNaQZbEIHJoE/hHeNfaJxYqrTHFoo=","SELECT");
-        requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
-        selectService(requestPacket.paramJson(), selectLoadListWeekSuccessEvent);
-    }
-    
-    
-    function selectLoadListWeekSuccessEvent(data) {
-        hideLoading();
-        
-        var htmlStr = "<section class='week_detail'>";
-        htmlStr += renderLecture(data.SELECT_LEC_INFO);
-        htmlStr += renderActivity(data.SELECT_ACT);
-        htmlStr += renderNotice(data.SELECT_NOTICE);
-        
-        
-        htmlStr += "</section>";
-        $("#divLecList").html(htmlStr);
         
     }
     
@@ -3522,280 +3535,550 @@ defTable["default"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', s
     
     
     
-    function renderLecture(list){
-        var html = "<div class='week_detail_lectures'>";
-        html += "    <div class='week_detail_title'><h5>" + list[0].CH_TIME_NO + "주차</h5><span class='period'>" + list[0].ATND_PERIOD + "(출석인정기간)</span></div>";
-
-        for(var i = 0; i < list.length; i++){
-            var lec = list[i];
-            var btnText = lec.PROGRESS == "100" ? "다시보기" : "강의듣기";
-            
-            
-            if("H51001" == "H51009"){
-                html += "<div class='lecture_card class_ing'>";
-                html += "    <div class='lecture_info'>";
-                html += "        <h6 class='lecture_title'><strong>" + lec.CH_TIME_NO_DIST + "강</strong> [" + lec.CONT_TYPE_NM + "] " + lec.TITLE + "</h6>";
-                html += "        <ul class='lecture_meta'>";
-                html += "            <li>학습요구시간 : " + lec.CH_TIME + "분</li>";
-                html += "            <li>출석여부 : " + toBlank(lec.USER_ATND_NM) + "</li>";
-                html += "            <li>진도율 : " + lec.PROGRESS + "%</li>";
-                html += "            <li>최종학습일 : " + String(lec.USER_END_DT).nvl("") + "</li>";
-                html += "        </ul>";
-                html += "    </div>";
-                html += "    <div class='lecture_actions'>";
-                if(lec.MEETING_YN == "N"){
-                        html += "        <button type='button' class='btn_line btn_primary' onclick='lectView(&#39;" + list[0].CH_TIME_NO + "&#39;, &#39;" + lec.CH_TIME_NO_DIST + "&#39;)'>" + btnText + "</button>";
-                }else{
-                    if(lec.MEETING_END_YN == "N"){
-                        html += "        <button type='button' class='btn_line btn_primary' onclick='zoomMeetingView(&#39;" + lec.GUEST_URL + "&#39;)'>화상강의</button>";
-                    }else{
-                        html += "        <button type='button' class='btn_line btn_primary' onclick='lectView(&#39;" + list[0].CH_TIME_NO + "&#39;, &#39;" + lec.CH_TIME_NO_DIST + "&#39;)'>" + btnText + "</button>";
-                    }
-                }
-                html += "    </div>";
-                html += "</div>";
-            }else{
-                html += "<div class='lecture_card class_ing'>";
-                html += "    <div class='lecture_info'>";
-                html += "        <h6 class='lecture_title'><strong>" + lec.CH_TIME_NO_DIST + "강</strong> [" + lec.CONT_TYPE_NM + "] " + lec.TITLE + "</h6>";
-                html += "        <ul class='lecture_meta'>";
-                html += "            <li>학습요구시간 : " + lec.CH_TIME + "분</li>";
-                html += "            <li>출석여부 : " + toBlank(lec.USER_ATND_NM) + "</li>";
-                html += "            <li>진도율 : " + lec.PROGRESS + "%</li>";
-                html += "            <li>최종학습일 : " + String(lec.USER_END_DT).nvl("") + "</li>";
-                html += "        </ul>";
-                html += "    </div>";
-                html += "    <div class='lecture_actions'>";
-                if(lec.MEETING_YN == "N"){
-                    if(lec.START_YN == "Y"){
-                        html += "        <button type='button' class='btn_line btn_primary' onclick='lectView(&#39;" + list[0].CH_TIME_NO + "&#39;, &#39;" + lec.CH_TIME_NO_DIST + "&#39;)'>" + btnText + "</button>";
-                    }
-                }else{
-                    if(lec.MEETING_END_YN == "N"){
-                        html += "        <button type='button' class='btn_line btn_primary' onclick='zoomMeetingView(&#39;" + lec.GUEST_URL + "&#39;)'>화상강의</button>";
-                    }else{
-                        html += "        <button type='button' class='btn_line btn_primary' onclick='lectView(&#39;" + list[0].CH_TIME_NO + "&#39;, &#39;" + lec.CH_TIME_NO_DIST + "&#39;)'>" + btnText + "</button>";
-                    }
-                }
-                html += "    </div>";
-                html += "</div>";
-            }
-        }
-        html += "</div>";
-        return html;
-    }
-
-    
-    function renderActivity(arrAct){
-        var html = "";
-        if(arrAct.length > 0) {
-            html += "<div class='week_detail_lectures'>";
-            html += "    <div class='week_detail_title'><span><h5>학습활동</h5></span></div>"
-            html += "    <div class='week_detail_activities'>"
-            for(var i = 0; i < arrAct.length; i++){
-                var item = arrAct[i];
-                html += "<div class='lecture_card'>";
-                html += "    <div class='lecture_info'>";
-                html += "        <h6 class='lecture_title'><strong>" + item.ACT_GBN_NM + "</strong> " + item.TITLE + "</h6>";
-                html += "        <ul class='lecture_meta'>";
-                html += "            <li>" + item.SUB_TITLE1 + " : " + item.START_DT + " ~ " + item.END_DT + "</li>";
-                html += "            <li>" + item.SUB_TITLE2 + " : <span class='status_no'>" + item.PARTICIPATION + "</span></li>";
-                html += "        </ul>";
-                html += "    </div>";
-                html += "    <div class='lecture_actions'>";
-                html += "       <button type='button' class='btn_line' onclick='clickBtn(\"" + item.ACT_GBN + "\")'>바로가기</button>";
-                html += "    </div>";
-                html += "</div>";
-            }
-            html += "    </div>";
-            html += "</div>";
-        }
-        return html;
-    }
-
-    
-    function renderNotice(arrNotice){
-        var html = "";
-        if(arrNotice.length > 0) {
-            html += "<div class='week_detail_lectures'>";
-            html += "    <div class='week_detail_title'><span><h5>공지사항</h5></span></div>"
-            html += "    <div class='week_detail_activities'>"
-            for(var i = 0; i < arrNotice.length; i++){
-                var item = arrNotice[i];
-                html += "<div class='lecture_card'>";
-                html += "    <div class='lecture_info'>";
-                html += "        <h6 class='lecture_title'><strong>[공지]</strong> " + item.TITLE + "</h6>";
-                html += "        <ul class='lecture_meta'>";
-                html += "            <li>등록일자 : " + (item.INPT_DT || "-") + "</li>";
-                html += "            <li>확인여부 : <span class='status_no'>" + item.PARTICIPATION + "</span></li>";
-                html += "        </ul>";
-                html += "    </div>";
-                html += "    <div class='lecture_actions'>";
-                html += "        <button type='button' class='btn_line' onclick=\"clickBtn('N')\">바로가기</button>";
-                html += "    </div>";
-                html += "</div>";
-            }
-            html += "    </div>";
-            html += "</div>";
-        }
-        return html;
-    }
-    
-
-    
-    function updateWeekButtons(weekStatus, weekMap) {
-        var btns = document.querySelectorAll('.weeks .week_btn');
-
-        for(var i = 0; i < btns.length; i++){
-            var btn = btns[i];
-            var onclickAttr = btn.getAttribute('onclick');
-            
-            if(!onclickAttr || onclickAttr.indexOf("ALL") !== -1) {
-                continue;
-            }
-
-            var match = onclickAttr.match(/\d+/);
-            if(!match) {
-                continue;
-            }
-
-            var week = match[0];
-            var status = weekStatus[week];
-            if(!status) {
-                continue;
-            }
-
-            // 버튼 클래스
-            btn.classList.remove("done", "notyet");
-            btn.classList.add(status == "done" ? "done" : "notyet");
-
-            // 상태 텍스트
-            var span = btn.querySelector('.status');
-            if(!span) {
-                span = document.createElement('span');
-                span.className = 'status';
-                btn.appendChild(span);
-            }
-            span.className = "status status_" + status;
-            span.textContent = (status == "done") ? "완료" : "미진행";
-        }
-
-        // 전체보기 버튼 - 현재 진행 중인 주차까지 진행률 구하기
-        var doneCount = 0;
-        var totalCount = 0;
-        var stopCounting = false;
-
-        // 주차 순서대로 정렬
-//         var weeks = Object.keys(weekMap).sort(function(a,b){ return a-b; });
-
-        for(var i = 0; i<weeks.length; i++){
-            var week = weeks[i];
-            var lectures = weekMap[week];
-            var weekAtndYn = lectures[0].WEEK_ATND_YN;
-
-            if(stopCounting) {
-                break;
-            }
-
-            for(var j = 0; j<lectures.length; j++){
-                var progress = parseFloat(lectures[j].CHASI_PROGRESS);
-                if(!isNaN(progress)){
-                    totalCount++;
-                    if(progress >= 100) {
-                        doneCount++;
-                    }
-                }
-            }
-
-            // 현재 진행 중인 주차 이후는 제외
-            if(weekAtndYn !== "Y") {
-                stopCounting = true;
-            }
-        }
-
-        var progressPercent = totalCount > 0 ? Math.round(doneCount / totalCount * 100) : 0;
-
-        var allBtn = document.querySelector('.weeks .week_btn[onclick*="ALL"]');
-        if(allBtn){
-            var span = allBtn.querySelector('span');
-            if(span) span.textContent = progressPercent + "%";
-            else {
-                span = document.createElement('span');
-                span.textContent = progressPercent + "%";
-                allBtn.appendChild(span);
-            }
-        }
-    }
-
-    
-    function lectView(strWeek, strSess){
-        if(nowYyShtmYn == "N" && "H51001" != "H51009"){
-            alertBox("학기 진행중에만 이용가능합니다.");
-            return;
-        }
-        
-        var params = new Array();
-        params.push({name : "LEC_NO", value : "GA29520120261"});
-        params.push({name : "LEC_NM", value : "백엔드 웹 개발"});
-        params.push({name : "LEC_YY", value : "2026"});
-        params.push({name : "LEC_SHTM", value : "1"});
-        params.push({name : "LEC_SHTM_NM", value : "1학기"});
-        params.push({name : "LEC_PROF_ID", value : "001046"});
-        params.push({name : "LEC_PROF_NM", value : "노윤홍"});
-        params.push({name : "LEC_CLSS", value : "01"});
-        params.push({name : "LEC_CH_TIME_NO", value : strWeek});
-        params.push({name : "LEC_CH_TIME_NO_DIST", value : strSess});
-        
-        $.ajax({
-            url: "/setClassRoomLecNo.its",
-            data : params,
-            type: "POST",
-            dataType: "json",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("AJAX", "true");
+    function setBookDataGrid() {
+        $('#bookDataGrid').DataTable({
+            caption : "수업교재 목록", 
+            bPaginate: false,
+            bSort: false,
+            processing: false,
+            serverSide: false,
+            scrollX: true,
+            dom: '<"top"l>rt<"bottom"ip><"clear">',
+            ajax: {
+                type: "POST",
+                data: function(data) {
+                    var requestPacket = new RequestPacket("sqlSession");
+                    requestPacket.addService("SELECT_BOOK","Bt/37YyQ4BcqRaSh5PNT0vDDUGSY2iDy7b9FuNd2gg0=","SELECT");
+                    requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+                    requestPacket.paramObject(data);
+                },
+                url: "/selectWithPage.its",
+                dataType: "JSON",
+                complete: function() { hideLoading(); },
+                error: function(xhr, status, errorThrown) { errorMessage(xhr, status, errorThrown, "/index.its"); }
             },
-            success: function (data) {
-                if(data.SUCCESS_YN == "Y") {
-                    var frm = document.frmList;
-                    frm.action = "/loadPage.its";
-                    $("#jspPage").val("/STUD/CLRO/A/STCRA020_03S");
-                    $("#S_LEC_NO").val("GA29520120261")
-                    $("#S_WEEK").val(strWeek);
-                    $("#S_SESS").val(strSess);
-                    frm.submit();
-                } else {
-                    alertBox(data.ERROR_MESSAGE);
-                }
+            
+            oLanguage: defaultLangObj(),
+            columns: setColumns("tab2Book"),
+            columnDefs: setColumnDefs("tab2Book"),
+            initComplete : function (oSetting) {
+                
+                var targetCaption = oSetting.oInit.caption;
+                var $wrapper = $(this).closest('.dt-scroll-body');
+ 
+                $wrapper.find('table').each(function() {
+                    if ($(this).find("caption").length === 0) {
+                        $(this).prepend('<caption>' + targetCaption + '</caption>');
+                    }
+                });
+            },
+            drawCallback : function() {
+            },
+            createdRow : function(row, data, dataIndex){
             }
         });
     }
-
     
     
-    function zoomMeetingView(strGuestUrl) {
-        if(nowYyShtmYn == "N"){
-            alertBox("학기 진행중에만 이용가능합니다.");
-            return;
-        }
+    function setRefSiteDataGrid() {
+        $('#refSiteDataGrid').DataTable({
+            caption : "참고사이트 목록", 
+            bPaginate: false,
+            bSort: false,
+            processing: false,
+            serverSide: false,
+            scrollX: true,
+            dom: '<"top"l>rt<"bottom"ip><"clear">',
+            ajax: {
+                type: "POST",
+                data: function(data) {
+                    var requestPacket = new RequestPacket("sqlSession");
+                    requestPacket.addService("SELECT_SITE","PBv7dFJY8LTWk8gWzd6HKd/YBpyqz7DneuiBjaSD5Rg=","SELECT");
+                    requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+                    requestPacket.paramObject(data);
+                },
+                url: "/selectWithPage.its",
+                dataType: "JSON",
+                complete: function() { hideLoading(); },
+                error: function(xhr, status, errorThrown) { errorMessage(xhr, status, errorThrown, "/index.its"); }
+            },
+            oLanguage: defaultLangObj(),
+            columns: setColumns("tab2Site"),
+            columnDefs: setColumnDefs("tab2Site"),
+            initComplete : function (oSetting) {
+                
+                var targetCaption = oSetting.oInit.caption;
+                var $wrapper = $(this).closest('.dt-scroll-body');
+ 
+                $wrapper.find('table').each(function() {
+                    if ($(this).find("caption").length === 0) {
+                        $(this).prepend('<caption>' + targetCaption + '</caption>');
+                    }
+                });
+            },
+            drawCallback : function() {
+            },
+            createdRow : function(row, data, dataIndex){
+            }
+        });
+    }
+    
+    
+    
+    
+    
+    async function loadVideo(e) {
+        showLoading();
         
-        const videoOptions = "width=1000,height=800,scrollbars=yes,resizable=yes";
-        window.open(strGuestUrl, "videoPopup", videoOptions);
+        
+        var subTitle = await getSubtitle();
+        
+        var params = new Array();
+        params.push({name:"CT_ID", value:ctId});
+        params.push({name:"CH_ID", value:chId});
+        
+        $.ajax({ 
+            url:"/getContents.its",
+            data : params,
+            type : "POST",
+            dataType: "json",
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("AJAX", "true");
+            },
+            success : function(data) {
+                if (!data || !data.VIDEO_URL) {
+                     console.error("컨텐츠 정보를 가져오지 못했습니다.");
+                     alertBox("컨텐츠 로딩 실패");
+                     hideLoading();
+                     contentLoadYn = "N";
+                     return;
+                }
+                var videoUrl = "https://vod.bdu.ac.kr/v1/AUTH_12e384c2f291470d9945fbc8ac28de53/VOD/" + data.VIDEO_URL;
+                
+                var setVideoSrc = [];
+                var sizeList = [];
+                
+                
+                let srcIndex = 0;
+                
+                var videoObj = new Object();
+                videoObj.size = '1080';
+                videoObj.src = videoUrl;
+                videoObj.type = 'video/mp4';
+                setVideoSrc.push(videoObj);
+                sizeList.push(1080);
+                
+                var arrSpeed = [ 0.5, 0.75, 1, 1.5, 1.75, 2];
+                var seekFlag = true;
+                if(gUserAtndChk == "N") {
+                    seekFlag = false;
+                    arrSpeed = [1];
+                }
+                playerConfig = {
+                        id: 'video', 
+                        src: setVideoSrc,
+                        speed: arrSpeed, 
+                        autoPlay: false,
+                        startTime: startTime, 
+                        seeking: seekFlag, 
+                        progress: true,  
+                        loop: [
+                            { enable: false, start: 10, end: 15 }
+                        ],
+                        bookmark: {
+                            enable: true,
+                            list: bookmarkList 
+                        },
+                        callback: [
+                            {
+                                end: playOnEnd, 
+                            }
+                        ],
+                        quality: { default: sizeList[srcIndex], options: sizeList, index: srcIndex },
+                        iconUrl: '/resources/js/tgplayer/plugin/js/plyr.svg',
+                    }
+                
+                
+                if(subTitle){
+                    var arrCationList = [];
+                    for(var i = 0; i < subTitle.AVAILABLE_LANGS.length; i++){
+                        var subTitleTxt = subTitle.SUBTITLES[subTitle.AVAILABLE_LANGS[i]];
+                        var blob = new Blob([subTitleTxt], { type: 'text/vtt;charset=utf-8' });
+                        var blobVtt = URL.createObjectURL(blob);
+                        
+                        if(subTitle.AVAILABLE_LANGS[i] == $("#LANG").val().toUpperCase()){
+                            arrCationList.push(
+                                { kind: 'captions', label: subTitle.AVAILABLE_LANGS[i],  srclang: subTitle.AVAILABLE_LANGS[i], src: blobVtt, default: true },
+                            );
+                        }else{
+                            arrCationList.push(
+                                { kind: 'captions', label: subTitle.AVAILABLE_LANGS[i],  srclang: subTitle.AVAILABLE_LANGS[i], src: blobVtt},
+                            );
+                        }
+                    }
+
+                    playerConfig['subtitle'] = {
+                            enable: true,
+                            list: arrCationList
+                    };
+
+                    
+                    var captions = vttToJson(subTitle.SUBTITLES[$("#LANG").val().toUpperCase()]);
+                    subtitleData = captions; 
+                    const html = captions.map(c => `<p  data-start="${timeToSeconds(c.start)}" data-end="${timeToSeconds(c.end)}" >${c.text}</p>`).join('');
+                    
+                    $(".caption_detail").html(html);
+                }
+                    
+                $('#videoPlayer').empty();
+                $('#videoPlayer').createVideo(playerConfig);
+                
+                videoPlayer = document.getElementById('video'); 
+                videoPlayer.removeAttribute('crossorigin');  
+                
+                if (videoPlayer) {
+                    videoPlayer.removeEventListener('timeupdate', onVideoTimeUpdate);
+                    videoPlayer.addEventListener('timeupdate', onVideoTimeUpdate);
+                    
+                    tg_player.on('languagechange', () => {
+                        if(tg_player.language){
+                            $("#LANG").val(tg_player.language);
+                            var captions = vttToJson(subTitle.SUBTITLES[$("#LANG").val().toUpperCase()]);
+                            subtitleData = captions;
+                        }
+                    });
+
+                    videoPlayer.addEventListener('loadeddata', onLoadData);
+                    
+                    
+                    const fullscreenButton = document.querySelector('button[data-plyr="fullscreen"]');
+                    if (fullscreenButton) {
+                        fullscreenButton.addEventListener('click', function () {
+                            
+                            const isFullscreen = fullscreenButton.classList.contains('plyr__control--pressed');
+                            if (isFullscreen) {
+                              $(".plyr__captions").hide();
+                            } else {
+                              $(".plyr__captions").show();
+                            }
+                        });
+                    }
+                }
+                initSaveCommand();
+                hideLoading();
+            },
+            error :  function(xhr, testStatus, errorThrown) {
+                 alertBox("컨텐츠 로딩 실패");
+                 hideLoading();
+                 contentLoadYn = "N";
+            }
+        });
         
     }
     
-    function clickBtn(strType){
+    
+    function onLoadData(){
+        $(".plyr__captions").hide();
+    }
+    
+    
+    function vodCurrentTime(){
+        var time = $('#video').vodCurrentTime();
+        time = Math.floor(time);
+        return time;
+    }
+    
+    
+    function vodPlay(){
+        $('#video').vodPlay();
+    }
+    
+    
+    function vodStatus(){ 
+        var status = $('#video').vodStatus();
+    }
+
+    
+    function bookmarkAdd(text, time){
+        $('#video').bookmarkAdd([{time : time || vodCurrentTime(), text : text}]);
+    }
+    
+    
+    function bookmarkRemove(seq){
+        $('#video').bookmarkRemove(seq);
+    }
+    
+    function playOnEnd() {
+    	saveCommand("E");
+    }
+    
+     
+    function initSaveCommand() {
+        var requestPacket = new RequestPacket("sqlSession");
+        if(dataYn != "Y") {
+            
+            requestPacket.addService("INSERT_LEC_RSLT","RmzsL5fr3DHmO4hSCr8lsWdkGUw9ZCf0YcwSlp6VRSo=","INSERT");
+            requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+            requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO", "0");
+            requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1");
+        }
+        
+        
+        requestPacket.addService("SELECT_RSLT_SEQ","DIDpcVpGbFGYKlhHladGr2JGoT+HKIktthBuD1hm7f4=","SELECTMAP");
+        requestPacket.getService(requestPacket.length() - 1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length() - 1).setParam("USER_ID", "20231038");
+        requestPacket.getService(requestPacket.length() - 1).setParam("CH_TIME_NO", "0");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1");
+        requestPacket.getService(requestPacket.length() - 1).setGiveParam("RSLT_SEQ");
+        
+        requestPacket.addService("INSERT_LEC_RSLT_LIST","RmzsL5fr3DHmO4hSCr8lsZ7mYjtyxPuXOaRiaZhzkm9v8f/mmxylePSH27ow1Adp","INSERT");
+        requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO", "0");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1");
+        requestPacket.getService(requestPacket.length()-1).setParam("RSLT_MARK_YN", gIngYn);
+        requestPacket.getService(requestPacket.length()-1).setParam("CONNECT_GB", "I");
+        requestPacket.getService(requestPacket.length() - 1).setTakeParam("RSLT_SEQ");
+        saveService(requestPacket.paramJson(), initSaveSuccessEvent);
+    }
+    
+    function initSaveSuccessEvent(data) {
+        
+        gRsltSeq = data.SELECT_RSLT_SEQ.RSLT_SEQ;
+        
+        
+        if(gUserAtndChk == "N" && gIngYn == "Y") {
+            setTimeout(() => {
+                $('#video').vodPause();
+                var endTimer = setTimeout(() => {
+                    clearInterval(atndTimer);
+                    alertBox("출석이벤트 ‘확인’ 버튼을 누르지 않아 학습이 종료되었습니다.\n수강을 계속 진행하시려면 강의듣기를 클릭하여 강의 이어듣기를 하시기바랍니다.", function() {
+                        attndEventChk = "N";
+                        listCommand();
+                    });
+                }, 1000 * 60 * 1);
+                
+                
+                const fullscreenButton = document.querySelector('button[data-plyr="fullscreen"]');
+                const isFullscreen = fullscreenButton.classList.contains('plyr__control--pressed');
+                
+                if (isFullscreen) {
+                    tg_player.fullscreen.exit();
+                }
+                
+                alertBox("다음의 확인버튼을 5분 이내에 클릭하지 않으면 이후 강의는 출석으로 인정되지 않습니다.", function() {
+                        clearTimeout(endTimer);
+                        attndEventChk = "Y";
+                        if (isFullscreen) {
+                            tg_player.fullscreen.enter();
+                        }
+                        $('#video').vodPlay();
+                        
+                    }
+                );
+            }, popupTime);
+        }
+        
+        let atndTimer = setInterval(() => {
+            
+            goExtendSession();
+            
+            $.ajax({
+                url: "/getClassRoomLecNo.its",
+                type: "POST",
+                dataType: "json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("AJAX", "true");
+                },
+                success: function (data) {
+                    if(data.SUCCESS_YN == "Y") {
+                        const sessLecNo = data.LEC_NO;
+                        const sessWeek = data.LEC_CH_TIME_NO;
+                        const sessSess = data.LEC_CH_TIME_NO_DIST;
+                        const pageLecNo = $("#S_LEC_NO").val();
+                        const pageWeek = $("#S_WEEK").val();
+                        const pageSess = $("#S_SESS").val();
+                        
+                        if(!(sessLecNo == pageLecNo && sessWeek == pageWeek && sessSess == pageSess)) {
+                            $('#video').vodPause();
+                            clearInterval(atndTimer);
+                            alertBox("한번에 한 강의만 수강할 수 있습니다.", function() {location.href = "/mainPortal.its"});
+                            return;
+                        }
+                    }else {
+                        alertBox(data.ERROR_MESSAGE);
+                    }
+                },
+                error: function (xhr, testStatus, errorThrown) {
+                    alertBox("오류가 발생했습니다. 메인페이지로 이동합니다.", function() {location.href = "/mainPortal.its"});
+                }
+            });
+            
+            saveCommand("I");
+        }, gRsltChkTime);
+    }
+    
+    
+     
+    function saveCommand(strCallBack) {
+        
+        var time = vodCurrentTime();
+        if(time > gUserTime){
+            gUserTime = time;
+        }
+        var requestPacket = new RequestPacket("sqlSession");
+        
+        requestPacket.addService("UPDATE_LEC_RSLT_LIST","+0h1asQO9kC+LqOxl0sSNFSTgxQ8G8KE43HA3oyZtquIpD6QfVTsYhv8OlfIYA4v","UPDATE");
+        requestPacket.getService(requestPacket.length()-1).setParam("CONNECT_GB", "I");
+        requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO", "0");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1"); 
+        requestPacket.getService(requestPacket.length()-1).setParam("RSLT_SEQ", gRsltSeq);
+        
+        requestPacket.addService("UPDATE_LEC_RSLT","+0h1asQO9kC+LqOxl0sSNFSTgxQ8G8KE43HA3oyZtqtv8f/mmxylePSH27ow1Adp","UPDATE");
+        requestPacket.getService(requestPacket.length()-1).setParam("CLS_IDX", "GA29520120261");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO", "0");
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME_NO_DIST", "1");
+        requestPacket.getService(requestPacket.length()-1).setParam("USER_TIME", gUserTime);
+        requestPacket.getService(requestPacket.length()-1).setParam("CH_TIME", gAtndTime);
+        requestPacket.getService(requestPacket.length()-1).setParam("ING_YN", gIngYn);
+        requestPacket.getService(requestPacket.length()-1).setParam("USER_ATND_CHKYN", gUserAtndChk);
+        
+        if(strCallBack =="F"){
+            saveService(requestPacket.paramJson(), finishSuccessEvent);
+        }else if(strCallBack =="E"){
+            saveService(requestPacket.paramJson(), endSuccessEvent);
+        }else{
+            saveService(requestPacket.paramJson(), saveSuccessEvent);
+        }
+        
+    }
+    function saveSuccessEvent(data) {
+        
+    }
+    function finishSuccessEvent(result) {
+        if(gUserAtndChk == "N"){
+            var time = vodCurrentTime();
+            if(gUserTime > time){
+                time = gUserTime;
+            }
+            var h = Math.floor(time / 3600);
+            var m = Math.floor((time % 3600) / 60);
+            var s = Math.floor(time % 60);
+
+            var timeStr = "";
+            if (h > 0) {
+                timeStr += h + "시간 ";
+            }
+            if (m > 0) {
+                timeStr += m + "분 ";
+            }
+            timeStr += s + "초";
+            
+            if (time >= gAtndTime*60) {
+                alertBox("학습이 종료되었습니다. 출석으로 인정되었습니다.", listCommand);
+            } else {
+                alertBox("학습을 중단하였습니다.(학습시간 : " + timeStr + ") 학습시간이 부족하여 출석으로 인정되지 않습니다.", listCommand);
+            }
+        }else{
+            listCommand();
+        }
+        
+    }
+    function endSuccessEvent(result) {
+        alertBox("학습이 종료되었습니다. 출석으로 인정되었습니다.");
+    }
+    
+    
+    
+    
+    function openqBookMaprPopup(e) {
+        if(contentLoadYn == "Y"){
+            var videoStatus = vodStatus();
+            $('#video').vodPause();
+            var studyTime = getStudyTime();
+            var openUrl = "/loadPage.its?jspPage="+"/popup/STUD/CLRO/A/STCRA020_03I";
+            openUrl += "&CT_ID=" + ctId;
+            openUrl += "&CH_ID=" + chId;
+            openUrl += "&TIME=" + studyTime;
+            openUrl += "&STATUS=" + videoStatus;
+            layerPopupOpen("북마크", 1000, 500, openUrl, false);
+        }else{
+            alertBox("컨텐츠 로딩에 실패하여 사용할 수 없습니다.");
+        }
+    }
+    
+    
+    function openqQuestPopup(e) {
+        if(contentLoadYn == "Y"){
+            $('#video').vodPause();
+            var studyTime = getStudyTime();
+            var openUrl = "/loadPage.its?jspPage="+"/popup/STUD/CLRO/A/STCRA020_01I";
+            openUrl += "&S_CH_NM=" + $("#S_CH_NM").val();
+            openUrl += "&TIME=" + studyTime;
+            layerPopupOpen("질문하기", 1000, 700, openUrl, false);
+        }else{
+            alertBox("컨텐츠 로딩에 실패하여 사용할 수 없습니다.");
+        }
+    }
+    
+    
+    function openErrorReportPopup() {
+        if(contentLoadYn == "Y"){
+            $('#video').vodPause();
+            var studyTime = getStudyTime();
+            var openUrl = "/loadPage.its?jspPage="+"/popup/STUD/CLRO/A/STCRA020_02I";
+            openUrl += "&S_WEEK=" + $("#S_WEEK").val();
+            openUrl += "&S_SESS=" + $("#S_SESS").val();
+            openUrl += "&S_CH_NM=" + $("#S_CH_NM").val();
+            openUrl += "&TIME=" + studyTime;
+            layerPopupOpen("오류신고", 1000, 700, openUrl, false);
+        }else{
+            alertBox("컨텐츠 로딩에 실패하여 사용할 수 없습니다.");
+        }
+    }
+    
+    
+    function finishStudy() {
+        if(contentLoadYn == "Y"){
+            $('#video').vodPause();
+            saveCommand("F");
+        }else{
+            alertBox("컨텐츠 로딩에 실패하여 학습시간 적용이 되지않습니다.", listCommand);
+        }
+        
+    }
+    
+    
+    function listCommand() {
+        var frm = document.frmList;
+        
+        frm.action = "/loadPage.its";
+        $("#jspPage").val("/STUD/CLRO/A/STCRA020");
+        
+        frm.submit();
+    }
+    
+    
+    function clickClassBtn(strPageGb, strTimeNo, strTimeNoDist, item) {
+        var bassParamtr = "jspPage=";
         var strMenuPage = "";
-        var strUrl = "/loadPage.its";
-        var strParam = "jspPage=";
+        
+        if(strPageGb == "L"){
+            bassParamtr += "/STUD/CLRO/A/STCRA020_03S";
+            strMenuPage = "/STUD/CLRO/A/STCRA020";
+        }
+        //var bassParamtr = "jspPage=" + "";
         var params = new Array();
-        params.push({name : "LEC_NO", value : "GA29520120261"});
-        params.push({name : "LEC_NM", value : "백엔드 웹 개발"});
-        params.push({name : "LEC_YY", value : "2026"});
-        params.push({name : "LEC_SHTM", value : "1"});
-        params.push({name : "LEC_SHTM_NM", value : "1학기"});
-        params.push({name : "LEC_PROF_ID", value : "001046"});
-        params.push({name : "LEC_PROF_NM", value : "노윤홍"});
-        params.push({name : "LEC_CLSS", value : "01"});
+        params.push({name : "LEC_NO", value : item["LEC_NO"]});
+        params.push({name : "LEC_NM", value : item["LEC_NM"]});
+        params.push({name : "LEC_YY", value : item["YY"]});
+        params.push({name : "LEC_SHTM", value : item["SHTM"]});
+        params.push({name : "LEC_SHTM_NM", value : item["SHTM_NM"]});
+        params.push({name : "LEC_PROF_ID", value : item["PROF_ID"]});
+        params.push({name : "LEC_PROF_NM", value : item["PROF_NM"]});
+        params.push({name : "LEC_CLSS", value : item["CLSS"]});
+        params.push({name : "LEC_CH_TIME_NO", value : strTimeNo});
+        params.push({name : "LEC_CH_TIME_NO_DIST", value : strTimeNoDist});
         
         $.ajax({
             url: "/setClassRoomLecNo.its",
@@ -3807,52 +4090,86 @@ defTable["default"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', s
             },
             success: function (data) {
                 if(data.SUCCESS_YN == "Y") {
-                    
-                    if(strType == "Q"){ 
-                        strMenuPage = "/STUD/CLRO/B/STCRB010";
-                        strParam += "/STUD/CLRO/B/STCRB010";
-                    }
-                    
-                    if(strType == "R"){
-                        strMenuPage = "/STUD/CLRO/C/STCRC020";
-                        strParam += "/STUD/CLRO/C/STCRC020";
-                    }
-                    
-                    if(strType == "D"){
-                        strMenuPage = "/STUD/CLRO/D/STCRD010";
-                        strParam += "/STUD/CLRO/D/STCRD010";
-                    }
-                    
-                    if(strType == "N"){
-                        strUrl = "/boardPage.its";
-                        strMenuPage = "/STUD/CLRO/E/STCRE010";
-                        strMenuPage += "&S_BOARD_ID=LEC_001&S_BBS_SE=SB4008";
-                        strParam += "/STUD/CLRO/E/STCRE010";
-                        strParam += "&S_BOARD_ID=LEC_001&S_BBS_SE=SB4008";
-                    }
                     const postData = {
-                        executUrl: strUrl,
-                        bassParamtr: strParam,
+                        executUrl: "/loadPage.its",
+                        bassParamtr: bassParamtr,
+                        extParam : {
+                            S_LEC_NO : item["LEC_NO"],
+                            S_WEEK : strTimeNo,
+                            S_SESS : strTimeNoDist
+                        },
                         menuCd: getMenuCd(strMenuPage),
                     }
                     classRoomMenuLoad(postData);
-                    
-                } else {
+                }else {
                     alertBox(data.ERROR_MESSAGE);
                 }
+            },
+            error: function (xhr, testStatus, errorThrown) {
+                alertBox("강의실 이동 중에 오류가 발생하였습니다. 관리자에게 문의하세요.", goLogOut);
             }
         });
-        
     }
+
     
-    
-    function lectNoteDown(lecNm, ctId, chTimeNo, chTimeNoDist) {
-        if(nowYyShtmYn == "N"){
-            alertBox("학기 진행중에만 이용가능합니다.");
-            return;
-        }
+    function clickBtn(lecNo, lecNm, yy, shtm, shtmNm, profNm, clss, week, sess, profId) {
+        var bassParamtr = "jspPage=" + $("#jspPage").val();
+        var params = new Array();
+        params.push({name : "LEC_NO", value : lecNo});
+        params.push({name : "LEC_NM", value : lecNm});
+        params.push({name : "LEC_YY", value : yy});
+        params.push({name : "LEC_SHTM", value : shtm});
+        params.push({name : "LEC_SHTM_NM", value : shtmNm});
+        params.push({name : "LEC_PROF_ID", value : profId});
+        params.push({name : "LEC_PROF_NM", value : profNm});
+        params.push({name : "LEC_CLSS", value : clss});
+        params.push({name : "LEC_CH_TIME_NO", value : week});
+        params.push({name : "LEC_CH_TIME_NO_DIST", value : sess});
         
+        $.ajax({
+            url: "/setClassRoomLecNo.its",
+            
+            data : params,
+            type: "POST",
+            dataType: "json",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("AJAX", "true");
+            },
+            success: function (data) {
+                if(data.SUCCESS_YN == "Y") {
+                    const postData = {
+                        executUrl: "/loadPage.its",
+                        bassParamtr: bassParamtr,
+                        extParm : {
+                            S_LEC_NO : lecNo,
+                            S_WEEK : week,
+                            S_SESS : sess
+                        },
+                        menuCd: $("#menuCd").val()
+                    }
+                    classRoomMenuLoad(postData);
+
+                    //classRoomMenuLoad(returnUrl);
+                }else {
+                    alertBox(data.ERROR_MESSAGE);
+                }
+            },
+            error: function (xhr, testStatus, errorThrown) {
+                alertBox("강의실 이동 중에 오류가 발생하였습니다. 관리자에게 문의하세요.", goLogOut);
+            }
+        });
+    }
+
+    
+    
+    
+    
+    
+    function lectNoteDown() {
         showLoading();
+        
+        var chTimeNo = "0";
+        var chTimeNoDist = "1";
         
         if(chTimeNo.length == 1) {
             chTimeNo = "0" + chTimeNo
@@ -3866,18 +4183,13 @@ defTable["default"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', s
                   , "CH_TIME_NO" : chTimeNo
                   , "CH_TIME_NO_DIST" : chTimeNoDist
                   , "downFileName" : chTimeNo + chTimeNoDist +".pdf"
-                  , "saveAsName" : lecNm + "_" + chTimeNo + "_" + chTimeNoDist
+                  , "saveAsName" : $("#tab1_group1 .detail_info div dd span#LEC_NM").text()+ "_" + chTimeNo + "_" + chTimeNoDist
             },
             success : function(data) {
                 hideLoading();
                 if(data.SUCCESS_YN == "Y") {
                     alertBox("모든 저작권은 부산디지털대학교에 있습니다.<br>모든 페이지 내용은 허가 없이 무단복제 및 도용을 금지합니다.", function() {
-                        
-                        
-                        window.open("/downloadFile.its?gubun=pds&history=false&homePageYn=N&oldYn=Y&downFileName="+encodeURI(chTimeNo + chTimeNoDist +".pdf", "UTF-8")+"&saveAsName="+encodeURI(chTimeNo + chTimeNoDist +".pdf", "UTF-8")+"&extendPath=CDMS/content/"+ ctId + "/note/&filePath=null");
-                        
-                        
-                        
+                        window.open("https://next.bdu.ac.kr/CDMS/CDMS/content/"+ ctId + "/note/"+ chTimeNo + chTimeNoDist +".pdf");
                     });
                 
                 } else if(data.SUCCESS_YN == "N") {
@@ -3894,89 +4206,507 @@ defTable["default"] = {isEdit:false, rowNum:true, rowCheck:true, pkColumns:'', s
     }
     
     
-    function lectNoteDownAll() {
-        if(nowYyShtmYn == "N"){
-            alertBox("학기 진행중에만 이용가능합니다.");
-            return;
+    function getSubtitle(){
+        return new Promise((resolve, reject) => {
+            var url = "/getSubtitle.its";
+            $("#CONT_CD").val(ctCd);
+            var params = $("#subTitleForm").serialize();
+            $.ajax({ url:url,
+                headers: { 'X-CSRF-TOKEN': $('meta[name=_csrf]').attr('content') },
+                data : params,
+                type : "POST",
+                dataType: "json",
+                success : function(data) {
+                    if(data.SUCCESS_YN === "Y"){ 
+                        if(data.AVAILABLE_LANGS.length > 0){
+                            $("#divSubtitle .caption_title").text("");
+                            $("#divSubtitle").show();
+                        }
+                        currentSubtitleIndex = -1;
+                        resolve(data);
+                    } else {
+                        subtitleData = [];
+                        currentSubtitleIndex = -1;
+                        /* alertBox("해당 콘텐츠의 자막이 없습니다."); */
+                        $("#divSubtitle .caption_title").text("자막없음");
+                        $("#divSubtitle").hide();
+                        //$('#subtitleToggleBtn').hide();
+                        
+                        resolve(null);
+                    }
+                },
+                error :  function(xhr, testStatus, errorThrown) {
+                    reject((errorThrown ? errorThrown : xhr.status));
+                }
+            });
+        })
+    }
+    
+    function vttToJson(vttString) {
+        const base = parseOneVtt(vttString || '');
+
+        
+        const result = base.map((c, i) => ({
+            id: c.id ?? (i + 1),
+            start: c.start ?? '',
+            end: c.end ?? '',
+            text: c.text ?? ''   
+        }));
+
+        return result;
+    }
+    
+    function parseOneVtt(vttString) {
+        const lines = vttString
+        .replace(/^\uFEFF/, '')             // BOM 제거
+        .replace(/^WEBVTT[^\n]*\n?/i, '')   // WEBVTT 헤더 제거
+        .split(/\r?\n/);                    // OS 무관 개행
+
+        const subtitles = [];
+        let i = 0;
+        let autoId = 1;
+    
+        
+        const timeLineRe = /^(\d{2}:)?\d{2}:\d{2}\.\d{3}\s*-->\s*(\d{2}:)?\d{2}:\d{2}\.\d{3}(?:\s+.*)?$/;
+    
+        const isBlank = (s) => s.trim() === '';
+    
+        
+        const skipBlockIfNeeded = (line) => /^(NOTE|STYLE|REGION)\b/i.test(line);
+    
+        while (i < lines.length) {
+            let line = (lines[i] || '').trimEnd();
+    
+            
+            if (isBlank(line)) { 
+                i++; 
+                continue; 
+            }
+    
+            
+            if (skipBlockIfNeeded(line)) {
+                // 다음 빈 줄까지 스킵
+                i++;
+                while (i < lines.length && !isBlank(lines[i])) i++;
+                continue;
+            }
+    
+            let id = null;
+            let timeLine = null;
+    
+            
+            if (/^\d+$/.test(line)) {
+                id = parseInt(line, 10);
+                i++;
+                if (i >= lines.length) break;
+                line = (lines[i] || '').trimEnd();
+    
+                // 바로 다음 줄이 타임라인이어야 정상 cue
+                if (timeLineRe.test(line)) {
+                    timeLine = line;
+                } else {
+                    // 타임라인이 아니면 식별자 취소
+                    id = null;
+                }
+            }
+    
+            
+            if (!timeLine) {
+                if (timeLineRe.test(line)) {
+                    timeLine = line;
+                } else {
+                    i++;
+                    continue;
+                }
+            }
+    
+            
+            const m = timeLine.match(
+                /((?:\d{2}:)?\d{2}:\d{2}\.\d{3})\s*-->\s*((?:\d{2}:)?\d{2}:\d{2}\.\d{3})/
+            );
+            if (!m) { 
+                i++; 
+                continue; 
+            }
+    
+            const start = m[1];
+            const end = m[2];
+    
+            
+            i++;  
+            const textLines = [];
+            while (i < lines.length && !isBlank(lines[i])) {
+                textLines.push(lines[i].trim());
+                i++;
+            }
+    
+            const text = textLines.join(' ');
+    
+            
+            if (id == null) id = autoId++;
+            subtitles.push({ id, start, end, text });
+    
+            
+            while (i < lines.length && isBlank(lines[i])) i++;
+        }
+    
+        return subtitles;
+    }
+
+    function timeStringToSeconds(timeString) {
+        if (!timeString) return 0;
+        const parts = timeString.split(':');
+        
+        if(parts.length == 3){
+            const secondsParts = parts[2].split('.');
+            const hours = parseInt(parts[0], 10);
+            const minutes = parseInt(parts[1], 10);
+            const seconds = parseInt(secondsParts[0], 10);
+            const milliseconds = parseInt(secondsParts[1], 10);
+            return (hours * 3600) + (minutes * 60) + seconds + (milliseconds / 1000);
+        }else{
+            const secondsParts = parts[1].split('.');
+            const hours = parseInt(0);
+            const minutes = parseInt(parts[0], 10);
+            const seconds = parseInt(secondsParts[0], 10);
+            const milliseconds = parseInt(secondsParts[1], 10);
+            return (hours * 3600) + (minutes * 60) + seconds + (milliseconds / 1000);
+        }
+    }
+
+    function onVideoTimeUpdate() {
+        if (!subtitleData || !videoPlayer) return;
+        const currentTime = videoPlayer.currentTime;
+        let foundIndex = -1;
+    
+        // 현재 시간에 맞는 자막 인덱스 찾기
+        for (let i = 0; i < subtitleData.length; i++) {
+            const startTime = timeStringToSeconds(subtitleData[i].start);
+            const endTime = timeStringToSeconds(subtitleData[i].end);
+            
+            if (currentTime >= startTime && currentTime <= endTime) {
+                foundIndex = i;
+                break;
+            }
+        }
+
+        //cation_detail 클래스 div에서 p 태그만 가져옴
+        const list = $('.caption_detail p');
+        // 현재 자막이 변경되었을 경우에만 DOM 조작
+        if (foundIndex !== -1 && foundIndex !== currentSubtitleIndex) {
+            currentSubtitleIndex = foundIndex;
+            $('#divSubtitle .caption_title').text(subtitleData[foundIndex].text);
+            
+            //const current = video.currentTime;
+
+            //for (let i = 0; i < list.length; i++) {
+                const $p = $(list[foundIndex]);
+                //data-start랑 data-end랑 비교해서 index 가져옴
+                list.removeClass('active');
+                $p.addClass('active');
+                var target = $("p[data-start='" + $p[0].dataset.start +"']").position().top + $(".caption_detail").scrollTop();
+                $(".caption_detail").animate({scrollTop:target, duration:400});
+           // }
         }
         
-        confirmBox("현재 개발중인 강의는 개발 완료 주차까지만 다운로드 됩니다. 다운로드 하시겠습니까?", function(){
-            var fileList = [];
-            var dtable = $("#dataGrid").DataTable();
-            var rows = dtable.rows().data();
+      //현재 시간 index
+       // let currentIndex = -1;
+        
+        //비디오 재생 시 해당되는 자막에 active 클래스 표시
+        videoPlayer.addEventListener('timeupdate', () => {
             
-            
-            var ctId = $("#CT_ID").val();
-            
-            
-            var zipFileName = "백엔드 웹 개발" + "(" + "01" + "분반) 전체 강의노트.zip";
-            
-            var url = "/downloadLectNoteZipFile.its?gubun=&history=false&zipName=" + zipFileName;
-            url += "&CLS_IDX=" + "GA29520120261" + "&extendPath=CDMS/content/"+ ctId + "/note/";
-            
-            window.open(url);
         });
     }
     
-</script>
+    
+    
+    function getStudyTime() {
+        var time = vodCurrentTime();
+        var h = Math.floor(time / 3600);
+        var m = Math.floor((time % 3600) / 60);
+        var s = time % 60;
 
-<form id="frmList" name="frmList" method="post" >
-    <input type = 'hidden' name='CURRPAGE' id='CURRPAGE' ><input type = 'hidden' name='SAVEMODE' id='SAVEMODE' ><input type = 'hidden' name='menuCd' id='menuCd' ><input type = 'hidden' name='jspPage' id='jspPage' ><input type = 'hidden' name='S_LEC_NO' id='S_LEC_NO' ><input type = 'hidden' name='S_WEEK' id='S_WEEK' ><input type = 'hidden' name='S_SESS' id='S_SESS' ><input type = 'hidden' name='CT_ID' id='CT_ID' >
+        h = ('0' + h).slice(-2);
+        m = ('0' + m).slice(-2);
+        s = ('0' + s).slice(-2);
+
+        return h + ':' + m + ':' + s;
+    }
+
+    function timeToSeconds(timeString) {
+        if (!timeString) return 0;
+        const parts = timeString.split(':'); // ["00", "00", "00.210"]
+        const h = parseFloat(parts[0]) || 0;
+        const m = parseFloat(parts[1]) || 0;
+        const s = parseFloat(parts[2]) || 0;
+        return h * 3600 + m * 60 + s;
+    }
+    
+    function btnSubtitleToggle(){
+        var isCollapsed = $("#divSubtitle").toggleClass("collapsed").hasClass("collapsed")
+        if (isCollapsed) {
+            $("#divSubtitle > .toggle_btn").find(".toggle_btn").attr("aria-label", "자막 펼치기");
+            $("#divSubtitle > .toggle_btn").find("span").attr("class", "icon_btn_open");
+            $(".caption_title").show();
+        }else{
+            $("#divSubtitle > .toggle_btn").find(".toggle_btn").attr("aria-label", "자막 접기");
+            $("#divSubtitle > .toggle_btn").find("span").attr("class", "icon_btn_close");
+            $(".caption_title").hide();
+        }
+    }
+    
+    
+    
+</script>
+  
+  
+<form id="subTitleForm" name="subTitleForm">
+    <input type="hidden" name="CONT_CD" id="CONT_CD"></input> <input
+        type="hidden" name="LANG" id="LANG" value="ko"></input> <input
+        type="hidden" name="CT_ID" id="CT_ID"></input> <input
+        type="hidden" name="CH_ID" id="CH_ID"></input>
 </form>
-    <div class="cont class_list">
+<form id="frmList" name="frmList" method="post" style="display: contents">
+    <input type = 'hidden' name='CURRPAGE' id='CURRPAGE' ><input type = 'hidden' name='SAVEMODE' id='SAVEMODE' ><input type = 'hidden' name='menuCd' id='menuCd' ><input type = 'hidden' name='jspPage' id='jspPage' ><input type = 'hidden' name='S_LEC_NO' id='S_LEC_NO' ><input type = 'hidden' name='S_WEEK' id='S_WEEK' ><input type = 'hidden' name='S_SESS' id='S_SESS' ><input type = 'hidden' name='S_CH_NM' id='S_CH_NM' >
+    <input type = 'hidden' name='LEC_NO' id='LEC_NO' ><input type = 'hidden' name='LEC_NM' id='LEC_NM' ><input type = 'hidden' name='YY' id='YY' ><input type = 'hidden' name='SHTM' id='SHTM' ><input type = 'hidden' name='SHTM_NM' id='SHTM_NM' ><input type = 'hidden' name='PROF_NM' id='PROF_NM' >
+
+    <div class="cont classroom">
         <section class="descript">
-            <div class="descript_cont">
+            <div class="descript_cont" id="descript-panel-1">
                 <ul class="list_dot">
-                    <li>강의는 시작일자와 종료일자(출석인정기간) 내에 학습시간 만큼 들으셔야 출석인정이 되며, 출석인정 기간이 지난 후에는 강의는 들을 수 있지만 결석처리 됩니다.</li>
-                    <li>본료의 모든 제작물의 저작권은 부산디지털대학교에 있으며, 무단복제나 도용은 저작권법(제104조의3)에 의해 금지되어 있습니다. 이를 위반 시 법적인 처벌을 받을 수 있습니다.</li>
-                    <li><span class="weeks"><span class="status status_done"></span> : 완료(진도율 100%) <span class="status status_ing"></span> : 진행중(진도율 99% 이하)</span></li>
+                    <li>강의는 시작 일자와 종료 일자(출석 인정 기간) 내에 학습 시간만큼 들으셔야
+                        출석 인정이 되며, 출석 인정 기간이 지난 후에는 강의는 들을 수 있지만 결석
+                        처리됩니다.</li>
+                    <li>본교의 모든 제작물의 저작권은 부산디지털대학교에 있으며, 무단 복제나 도용은
+                        저작권법(제104조의3)에 의해 금지되어 있습니다. 이를 위반 시 법적인 처벌을 받을
+                        수 있습니다.</li>
+                    <li>강의 종류 : 동영상(VOD), 음성(AOD), 웹 강의, 모바일 지원</li>
                 </ul>
             </div>
-            <button type="button" class="btn_toggle" aria-expanded="true" aria-controls="descript-panel-1">접기</button>
+            <button type="button" class="btn_toggle"
+                aria-expanded="true" aria-controls="descript-panel-1">접기</button>
         </section>
-        
-        <section class="btn_area">
-            <button type="button" class="btn" onclick="lectNoteDownAll();">전체 강의노트</button>
-        </section>
-        <section class="pannel">
-            <h4>강의보기</h4>
-            
-            <!-- 상단 네비게이션 -->
-            <div class="week_nav">
-                <button type="button" class="btn_prev" aria-label="이전 주차">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                </button>
-                <div id="btnWeeks" class="weeks">
+
+        <div class="blockWrap">
+            <div class="blockLeft">
+                <section class="lecture_view card">
+                    <h4>
+                        강의보기
+                        <p class="btn_area">
+                            <button type="button"
+                                class="btn btn_primary"
+                                onclick="lectNoteDown();">강의노트
+                                다운로드</button>
+                        </p>
+                    </h4>
+
+                    <div class="lecture_titlebar">
+                        <h5 class="lecture_title"><span id='LEC_NM'   ></span>
+                            | <span id='CH_NM'   ></span>
+                            <span id='TITLE'   ></span></h5>
+                        <div class="fr">
+                            <button type="button" class="btn_line"
+                                onclick="openqBookMaprPopup()">북마크</button>
+                            <button type="button" class="btn_line"
+                                onclick="openqQuestPopup()">질문하기</button>
+                            <button type="button" class="btn_line"
+                                onclick="openErrorReportPopup()">오류신고</button>
+                            <button type="button" class="btn"
+                                onclick="finishStudy()">학습종료</button>
+                        </div>
+                    </div>
+
+                    <div class="lecture_video">
+                        <div id="videoPlayer"
+                            style="overflow: hidden; height: auto;"></div>
+                    </div>
+
                     
-                </div>
-                <button type="button" class="btn_next" aria-label="다음 주차">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </button>
+                    <div class="lecture_video">
+                        <div id="divSubtitle" class="caption collapsed">
+                            <div class="caption_title">자막</div>
+                            <div class="caption_detail"></div>
+                            <button id="subtitleToggleBtn" type="button"
+                                class="toggle_btn" aria-label="자막 펼치기"
+                                onclick="btnSubtitleToggle()">
+                                <span class="icon_btn_open"></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="lecture_footer">
+                        <span>진도율 : <strong><span id='PROGRESS'   ></span>%</strong></span>
+                        <span class="last_learn">최종학습일 : <span id='USER_END_DT'   ></span></span>
+                    </div>
+                </section>
+
+                <section class="tab_face">
+                    <ul>
+                        <li data-tab="tab1_group1" class="current"><a
+                            href="" title="선택됨" aria-current="page">강의
+                                개요</a></li>
+                        <li data-tab="tab2_group1" class=""><a
+                            href="">강의 교재</a></li>
+                        <!-- 수강장애 FAQ 최신화 될때까지 주석처리 -->
+                        <!--                         <li data-tab="tab3_group1" class=""><a href="">수강장애 FAQ</a></li> -->
+<!--                         <li data-tab="tab4_group1" class=""><a -->
+<!--                             href="">채팅</a></li> -->
+                    </ul>
+                    <div>
+                        <div id="tab1_group1" class="tabcontent current">
+                            <h4>교과목</h4>
+                            <dl class="detail_info column3">
+                                <div>
+                                    <dt>교과목명 / 분반</dt>
+                                    <dd><span id='LEC_NM'   ></span>
+                                        / <span id='CLSS'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>학점</dt>
+                                    <dd><span id='PNT'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>학년</dt>
+                                    <dd><span id='OPEN_SHYR_NM'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>이수구분</dt>
+                                    <dd><span id='POBT_NM'   ></span></dd>
+                                </div>
+                                <div class="span2">
+                                    <dt>학과</dt>
+                                    <dd><span id='KOR_SUST_NM'   ></span></dd>
+                                </div>
+                            </dl>
+
+                            <h4>수업계획</h4>
+                            <dl class="detail_info column1">
+                                <div>
+                                    <dt>수업목표</dt>
+                                    <dd><span id='LEC_GOAL'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>수업개요</dt>
+                                    <dd><span id='LEC_INTRO'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>수업방법</dt>
+                                    <dd><span id='LEC_METHOD'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>수업평가(%)</dt>
+                                    <dd><span id='LEC_EVL'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>평가방식</dt>
+                                    <dd><span id='APPR_MTHD_NM'   ></span></dd>
+                                </div>
+                                <div>
+                                    <dt>리포트 주제 및 제출기간</dt>
+                                    <dd>
+                                        <table class="table_base">
+                                            <caption>리포트 현황</caption>
+                                            <thead>
+                                                <tr>
+                                                    <th>주제</th>
+                                                    <th>제출기간</th>
+                                                    <th>비고</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><span id='REPORT_NAME'   ></span></td>
+                                                    <td><span id='REPORT_SUBMIT_DT'   ></span></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div id="tab2_group1" class="tabcontent">
+                            <h4>수업 교재</h4>
+                            <div class="table-wrapper edit">
+                                <table class="table_base" id="bookDataGrid">
+                                    <thead>
+                                        <tr><th>수업교재</th><th>저자</th><th>저서명</th><th>출판사</th><th>발행연도</th><th>정가</th></tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <h4>참고 사이트</h4>
+                            <div class="table-wrapper edit">
+                                <table class="table_base" id="refSiteDataGrid">
+                                    <thead>
+                                        <tr><th>사이트 이름</th><th>사이트 주소</th></tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- 수강장애 FAQ 최신화 될때까지 주석처리 -->
+                        <!--                         <div id="tab3_group1" class="tabcontent"> -->
+                        <!--                             <h4>수강장애 FAQ</h4> -->
+
+                        
+
+                        <!--                         </div> -->
+                        <div id="tab4_group1" class="tabcontent"
+                            style="height: 430px;">
+                            <iframe
+                                src="https://webmeet.bdu.ac.kr/zoom/chat/iframe?studentId=flwTwEc4iI-i4B6sooG3dg&courseId=GA29520120261"
+                                width="100%" height="100%"
+                                title="채팅 아이프레임">
+                            </iframe>
+
+                        </div>
+                    </div>
+                </section>
             </div>
-            <div id="divLecList"></div>
-        
             
-        </section>
-        
+            <div class="blockRight">
+                <div id="divNowWeekProg" class="progress_item">
+                    <span class="label">진도율</span>
+                    <div class="progress">
+                        <div class="progress_bar" style="width: 0%"></div>
+                    </div>
+                    <span class="value">0%</span>
+                </div>
+                <section class="tab_face">
+                    <ul class="w_full">
+                        <li data-tab="tab1_group2" class="current"><a
+                            href="" title="선택됨" aria-current="page">목록(주차/강)</a></li>
+                        <li data-tab="tab2_group2" class=""><a
+                            href="">수강 과목</a></li>
+                        <li data-tab="tab3_group2" class=""><a
+                            href="">AI 튜터</a></li>
+                    </ul>
+                    <div id="tab1_group2" class="tabcontent current">
+                        <div class="card_body lecture_list"
+                            id="divLecList"></div>
+                    </div>
+                    <div id="tab2_group2" class="tabcontent">
+                        <ul class="course_list">
+                        </ul>
+                    </div>
+                    <div id="tab3_group2" class="tabcontent">
+                        <div class="iframe-wrapper">
+                            <iframe id="ai-tutor" title="AI 튜터"
+                                src="https://bdu.heymango.ai/tutor"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allow="clipboard-read; clipboard-write"
+                                sandbox="allow-scripts allow-same-origin">
+                            </iframe>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+        </div>
     </div>
+</form>
 <script>
-const weeks = document.querySelector('#btnWeeks');
-const btnPrev = document.querySelector('.btn_prev');
-const btnNext = document.querySelector('.btn_next');
-
-// 한번에 이동할 픽셀 (버튼 하나 너비 정도)
-const scrollAmount = 200;
-
-// 좌우 이동
-btnPrev.addEventListener('click', () => {
-  weeks.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-});
-btnNext.addEventListener('click', () => {
-  weeks.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-});
 
 </script>
-
                     </section>
                 </div>
             </section>
