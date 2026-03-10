@@ -8,15 +8,15 @@ from src.utils.config import Config
 
 
 class LoginHandler:
-    """BDU 포털 로그인 처리 클래스"""
+    """BDU LMS 로그인 처리 클래스"""
 
     def __init__(self, driver: webdriver.Chrome, config: Config | None = None):
         self.driver = driver
         self.config = config or Config()
 
     def open_portal(self) -> None:
-        """BDU 포털 페이지 열기"""
-        self.driver.get(self.config.PORTAL_URL)
+        """BDU LMS 페이지 열기 (직접 접속)"""
+        self.driver.get(self.config.LMS_URL)
 
     def wait_for_login(
         self,
@@ -59,20 +59,20 @@ class LoginHandler:
         로그인 여부 확인
 
         로그인 완료 조건:
-        - URL이 포털 로그인 페이지가 아님
-        - URL에 특정 키워드 포함 (main, home, lms 등)
+        - URL이 LMS 로그인 페이지가 아님
+        - URL에 특정 키워드 포함 (main, home, dashboard 등)
         """
-        login_indicators = ["main", "home", "dashboard", "mypage", "intro"]
-        portal_login_page = self.config.PORTAL_URL
+        login_indicators = ["main", "home", "dashboard", "mypage", "intro", "course"]
+        lms_login_page = self.config.LMS_URL
 
-        # 포털 로그인 페이지가 아니고, 로그인 후 페이지 패턴과 일치
-        if current_url != portal_login_page:
+        # LMS 로그인 페이지가 아니고, 로그인 후 페이지 패턴과 일치
+        if current_url != lms_login_page:
             for indicator in login_indicators:
                 if indicator in current_url.lower():
                     return True
 
             # 또는 URL이 변경되었으면 로그인된 것으로 간주
-            if len(current_url) > len(portal_login_page) + 10:
+            if len(current_url) > len(lms_login_page) + 10:
                 return True
 
         return False

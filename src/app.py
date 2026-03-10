@@ -455,7 +455,7 @@ class BDUTrackerApp(ctk.CTk):
         return False
 
     def _start_video_playback(self, driver, max_attempts: int = 15) -> bool:
-        """비디오 재생 시작 - video.play() 방식"""
+        """비디오 재생 시작 - Selenium 클릭 방식 (브라우저 자동재생 정책 우회)"""
 
         # 1. video 요소가 로드될 때까지 대기
         logger.info("비디오 요소 대기 중...")
@@ -471,31 +471,45 @@ class BDUTrackerApp(ctk.CTk):
 
         time.sleep(2)  # 추가 안정화
 
-        # 2. video.play() 호출
+        # 2. 재생 버튼 클릭 시도 (Selenium 실제 클릭 = 사용자 상호작용)
+        play_button_selectors = [
+            ".plyr__control--overlaid",  # Plyr 큰 재생 버튼 (오버레이)
+            "button[data-plyr='play']",  # Plyr 재생 버튼
+            ".plyr__controls button[data-plyr='play']",  # 컨트롤바 재생 버튼
+            ".vjs-big-play-button",  # Video.js 스타일
+            ".play-button",  # 일반적인 재생 버튼
+            "video",  # 비디오 요소 직접 클릭
+        ]
+
         for attempt in range(5):
-            try:
-                driver.execute_script("""
-                    var video = document.querySelector('video');
-                    if (video) {
-                        video.play();
-                    }
-                """)
-                time.sleep(1)
+            for selector in play_button_selectors:
+                try:
+                    element = driver.find_element(By.CSS_SELECTOR, selector)
+                    if element and element.is_displayed():
+                        element.click()
+                        logger.info(f"재생 버튼 클릭 (선택자: {selector})")
+                        time.sleep(1)
 
-                # 재생 확인
-                is_playing = driver.execute_script("""
-                    var video = document.querySelector('video');
-                    return video && !video.paused;
-                """)
-                if is_playing:
-                    logger.info("비디오 재생 시작됨!")
-                    return True
+                        if self._check_video_playing(driver):
+                            logger.info("비디오 재생 시작됨!")
+                            return True
+                except Exception:
+                    continue
 
-            except Exception as e:
-                logger.debug(f"재생 시도 {attempt+1} 실패: {e}")
-                time.sleep(1)
+            # 모든 선택자 실패 시 잠시 대기 후 재시도
+            time.sleep(1)
 
         return False
+
+    def _check_video_playing(self, driver) -> bool:
+        """비디오가 재생 중인지 확인"""
+        try:
+            return driver.execute_script("""
+                var video = document.querySelector('video');
+                return video && !video.paused && video.currentTime > 0;
+            """)
+        except Exception:
+            return False
 
     def _find_attendance_modal_button(self, driver, timeout: int = 5):
         """출석 확인 모달의 확인 버튼 찾기"""
