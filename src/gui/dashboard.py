@@ -18,6 +18,7 @@ class Dashboard(ctk.CTkFrame):
         on_refresh_click: Callable[[], None] | None = None,
         on_go_lms_click: Callable[[], None] | None = None,
         on_course_click: Callable[[CourseInfo], None] | None = None,
+        on_all_courses_click: Callable[[], None] | None = None,
         **kwargs,
     ):
         super().__init__(master, fg_color="#F5F5F5", **kwargs)
@@ -27,7 +28,9 @@ class Dashboard(ctk.CTkFrame):
         self.on_refresh_click = on_refresh_click
         self.on_go_lms_click = on_go_lms_click
         self.on_course_click = on_course_click
+        self.on_all_courses_click = on_all_courses_click
         self.course_cards: list[CourseCard] = []
+        self._initial_remaining: dict[str, int] = {}  # 과목명 → 초기 미청취 수
 
         self._create_widgets()
 
@@ -65,37 +68,49 @@ class Dashboard(ctk.CTkFrame):
         self.refresh_btn = ctk.CTkButton(
             btn_frame,
             text="새로고침",
-            width=100,
-            height=35,
+            width=70,
+            height=32,
             fg_color="#4CAF50",
             hover_color="#45A049",
             command=self._on_refresh,
         )
-        self.refresh_btn.pack(side="right", padx=5)
+        self.refresh_btn.pack(side="right", padx=3)
+
+        # 전체 자동 시청 버튼
+        self.all_courses_btn = ctk.CTkButton(
+            btn_frame,
+            text="전체시청",
+            width=70,
+            height=32,
+            fg_color="#9C27B0",
+            hover_color="#7B1FA2",
+            command=self._on_all_courses,
+        )
+        self.all_courses_btn.pack(side="right", padx=3)
 
         # 강의페이지로 가기 버튼
         self.go_lms_btn = ctk.CTkButton(
             btn_frame,
             text="강의페이지",
-            width=100,
-            height=35,
+            width=80,
+            height=32,
             fg_color="#FF9800",
             hover_color="#F57C00",
             command=self._on_go_lms,
         )
-        self.go_lms_btn.pack(side="right", padx=5)
+        self.go_lms_btn.pack(side="right", padx=3)
 
         # 포털 열기 버튼
         self.login_btn = ctk.CTkButton(
             btn_frame,
-            text="포털 열기",
-            width=100,
-            height=35,
+            text="포털열기",
+            width=70,
+            height=32,
             fg_color="#2196F3",
             hover_color="#1976D2",
             command=self._on_login,
         )
-        self.login_btn.pack(side="right", padx=5)
+        self.login_btn.pack(side="right", padx=3)
 
     def _create_content(self) -> None:
         """컨텐츠 영역 생성"""
@@ -140,6 +155,11 @@ class Dashboard(ctk.CTkFrame):
         if self.on_go_lms_click:
             self.on_go_lms_click()
 
+    def _on_all_courses(self) -> None:
+        """전체 자동 시청 버튼 클릭"""
+        if self.on_all_courses_click:
+            self.on_all_courses_click()
+
     def set_status(self, text: str, status_type: str = "normal") -> None:
         """상태 표시 업데이트"""
         if status_type == "loading":
@@ -169,17 +189,36 @@ class Dashboard(ctk.CTkFrame):
             self.empty_label.pack(pady=50)
             return
 
+        # 미청취가 0인 과목 제외 및 미청취 적은 순 정렬
+        filtered_courses = [c for c in courses if c.remaining_lectures > 0]
+        filtered_courses.sort(key=lambda c: c.remaining_lectures)
+
+        if not filtered_courses:
+            self.empty_label.configure(text="모든 강의를 완료했습니다! 🎉")
+            self.empty_label.pack(pady=50)
+            return
+
         # 과목 카드 생성
-        for course in courses:
+        for course in filtered_courses:
+            # 첫 로드 시에만 초기 미청취 수 저장
+            if course.name not in self._initial_remaining:
+                self._initial_remaining[course.name] = course.remaining_lectures
+
+            initial = self._initial_remaining[course.name]
             card = CourseCard(
                 self.scrollable_frame,
                 course,
+                initial_remaining=initial,
                 on_click=self.on_course_click,
             )
             card.pack(fill="x", padx=5, pady=5)
             self.course_cards.append(card)
 
-        self.set_status(f"{len(courses)}개 과목 로드 완료", "success")
+        hidden_count = len(courses) - len(filtered_courses)
+        if hidden_count > 0:
+            self.set_status(f"{len(filtered_courses)}개 과목 표시 (완료 {hidden_count}개 숨김)", "success")
+        else:
+            self.set_status(f"{len(filtered_courses)}개 과목 로드 완료", "success")
 
     def clear_courses(self) -> None:
         """과목 목록 초기화"""
@@ -190,9 +229,10 @@ class Dashboard(ctk.CTkFrame):
         self.empty_label.pack(pady=50)
 
     def set_buttons_enabled(
-        self, login: bool = True, refresh: bool = True, go_lms: bool = True
+        self, login: bool = True, refresh: bool = True, go_lms: bool = True, all_courses: bool = True
     ) -> None:
         """버튼 활성화/비활성화"""
         self.login_btn.configure(state="normal" if login else "disabled")
         self.refresh_btn.configure(state="normal" if refresh else "disabled")
         self.go_lms_btn.configure(state="normal" if go_lms else "disabled")
+        self.all_courses_btn.configure(state="normal" if all_courses else "disabled")

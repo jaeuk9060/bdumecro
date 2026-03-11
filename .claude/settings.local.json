@@ -6,7 +6,20 @@
       "Bash(cd:*)",
       "Bash(dir:*)",
       "Bash(powershell:*)",
-      "Bash(python -m py_compile:*)"
+      "Bash(python -m py_compile:*)",
+      "Bash(python:*)",
+      "Bash(set PYTHONPATH=.)",
+      "Bash(gh:*)",
+      "Bash(pip install:*)",
+      "Bash(pyinstaller:*)",
+      "Bash(where gh:*)",
+      "Bash(winget install:*)",
+      "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" auth status)",
+      "Bash(git tag:*)",
+      "Bash(git push:*)",
+      "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" release create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

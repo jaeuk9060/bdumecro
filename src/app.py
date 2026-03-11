@@ -29,6 +29,7 @@ class BDUTrackerApp(ctk.CTk):
         self.browser: BrowserDriver | None = None
         self.login_handler: LoginHandler | None = None
         self.is_logged_in = False
+        self.courses: list[CourseInfo] = []  # 과목 목록 저장
 
         self._setup_window()
         self._create_dashboard()
@@ -66,6 +67,7 @@ class BDUTrackerApp(ctk.CTk):
             on_refresh_click=self._on_refresh,
             on_go_lms_click=self._on_go_lms,
             on_course_click=self._on_course_click,
+            on_all_courses_click=self._on_all_courses_click,
         )
         self.dashboard.pack(fill="both", expand=True)
 
@@ -132,6 +134,7 @@ class BDUTrackerApp(ctk.CTk):
             courses = parser.parse()
 
             if courses:
+                self.courses = courses  # 인스턴스에 저장
                 self._update_status(f"{len(courses)}개 과목 발견!", "success")
                 self.after(0, lambda: self.dashboard.display_courses(courses))
             else:
@@ -194,6 +197,69 @@ class BDUTrackerApp(ctk.CTk):
         self.dashboard.set_status("LMS 페이지로 이동 중...", "loading")
         thread = threading.Thread(target=self._go_lms_process, daemon=True)
         thread.start()
+
+    def _on_all_courses_click(self) -> None:
+        """전체 자동 시청 버튼 클릭"""
+        if not self.login_handler:
+            self.dashboard.set_status("먼저 포털을 열어주세요.", "error")
+            return
+
+        self.dashboard.set_buttons_enabled(False, False, False, False)
+        self.dashboard.set_status("미청취 과목 탐색 및 자동 시청 시작...", "loading")
+        thread = threading.Thread(
+            target=self._play_all_incomplete_courses,
+            daemon=True
+        )
+        thread.start()
+
+    def _play_all_incomplete_courses(self) -> None:
+        """모든 미완료 과목을 순차적으로 시청 (매 과목 완료 후 재탐색)"""
+        completed_count = 0
+
+        try:
+            while True:
+                # 1. LMS 메인으로 이동
+                self._update_status("LMS 페이지로 이동 중...", "loading")
+                driver = self.login_handler.driver
+                driver.get(self.config.LMS_URL)
+                time.sleep(3)
+
+                # 2. 과목 리스트 재파싱
+                self._update_status("미청취 과목 탐색 중...", "loading")
+                html = self.login_handler.get_lms_page_source()
+                parser = LMSParser(html)
+                courses = parser.parse()
+
+                # 3. 미청취 강의가 있는 과목 필터링
+                incomplete = [c for c in courses if c.remaining_lectures > 0]
+
+                # 4. 미청취 과목이 없으면 종료
+                if not incomplete:
+                    self._update_status(
+                        f"전체 {completed_count}개 과목 완료! 더 이상 미청취 강의 없음",
+                        "success"
+                    )
+                    break
+
+                # 5. 첫 번째 미완료 과목 시청
+                course = incomplete[0]
+                self._update_status(
+                    f"'{course.name}' 시청 시작... (미청취: {course.remaining_lectures}개)",
+                    "loading"
+                )
+
+                self._open_all_lectures(course)
+                completed_count += 1
+                self._update_status(
+                    f"'{course.name}' 완료! 다음 과목 탐색 중...",
+                    "loading"
+                )
+
+        except Exception as e:
+            logger.error(f"전체 시청 중 오류: {e}")
+            self._update_status(f"오류 발생: {str(e)}", "error")
+        finally:
+            self._enable_buttons()
 
     def _start_lecture(self, course: CourseInfo) -> None:
         """강의 수강 시작"""

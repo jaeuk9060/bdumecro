@@ -38,6 +38,7 @@ class CourseCard(ctk.CTkFrame):
         self,
         master,
         course: CourseInfo,
+        initial_remaining: int = 0,
         on_click: Callable[["CourseInfo"], None] | None = None,
         **kwargs,
     ):
@@ -51,12 +52,20 @@ class CourseCard(ctk.CTkFrame):
         )
 
         self.course = course
+        self.initial_remaining = initial_remaining if initial_remaining > 0 else course.remaining_lectures
         self.on_click = on_click
         self._create_widgets()
         self._bind_click_events()
 
     def _create_widgets(self) -> None:
         """위젯 생성"""
+        # 미청취 진행 상황 계산
+        completed_count = self.initial_remaining - self.course.remaining_lectures
+        if self.initial_remaining > 0:
+            progress_percent = (completed_count / self.initial_remaining) * 100
+        else:
+            progress_percent = 100.0  # 미청취가 없으면 100%
+
         # 과목명
         self.name_label = ctk.CTkLabel(
             self,
@@ -71,28 +80,28 @@ class CourseCard(ctk.CTkFrame):
         progress_frame = ctk.CTkFrame(self, fg_color="transparent")
         progress_frame.pack(fill="x", padx=15, pady=5)
 
-        # 진행률 텍스트
+        # 진행률 텍스트 (미청취 기준)
         progress_label = ctk.CTkLabel(
             progress_frame,
-            text=f"진도율: {self.course.progress_text}",
+            text=f"진도율: {progress_percent:.1f}%",
             font=ctk.CTkFont(size=13),
             text_color="#666666",
         )
         progress_label.pack(side="left")
 
-        # 강의 현황 텍스트
-        lecture_label = ctk.CTkLabel(
+        # 미청취 현황 텍스트 (완료한 미청취/초기 미청취)
+        status_label = ctk.CTkLabel(
             progress_frame,
-            text=f"({self.course.lecture_status} 완료)",
+            text=f"({completed_count}/{self.initial_remaining})",
             font=ctk.CTkFont(size=12),
             text_color="#888888",
         )
-        lecture_label.pack(side="right")
+        status_label.pack(side="right")
 
-        # 진행률 바
+        # 진행률 바 (미청취 기준)
         self.progress_bar = ProgressBar(
             self,
-            progress=self.course.progress,
+            progress=progress_percent,
             height=12,
             fg_color="transparent",
         )
