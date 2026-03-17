@@ -3,7 +3,7 @@ import customtkinter as ctk
 from typing import Callable
 
 from src.parser.lms_parser import CourseInfo
-from src.gui.components import CourseCard, StatusLabel
+from src.gui.components import CourseCard, LogViewer, StatusLabel
 from src.utils.config import Config
 
 
@@ -19,6 +19,8 @@ class Dashboard(ctk.CTkFrame):
         on_go_lms_click: Callable[[], None] | None = None,
         on_course_click: Callable[[CourseInfo], None] | None = None,
         on_all_courses_click: Callable[[], None] | None = None,
+        on_pause_click: Callable[[], None] | None = None,
+        on_stop_click: Callable[[], None] | None = None,
         **kwargs,
     ):
         super().__init__(master, fg_color="#F5F5F5", **kwargs)
@@ -29,8 +31,11 @@ class Dashboard(ctk.CTkFrame):
         self.on_go_lms_click = on_go_lms_click
         self.on_course_click = on_course_click
         self.on_all_courses_click = on_all_courses_click
+        self.on_pause_click = on_pause_click
+        self.on_stop_click = on_stop_click
         self.course_cards: list[CourseCard] = []
         self._initial_remaining: dict[str, int] = {}  # 과목명 → 초기 미청취 수
+        self._log_visible = False
 
         self._create_widgets()
 
@@ -38,6 +43,9 @@ class Dashboard(ctk.CTkFrame):
         """위젯 생성"""
         # 헤더
         self._create_header()
+
+        # 재생 컨트롤 바
+        self._create_toolbar()
 
         # 컨텐츠 영역 (스크롤 가능)
         self._create_content()
@@ -60,7 +68,7 @@ class Dashboard(ctk.CTkFrame):
         )
         title_label.pack(side="left", padx=20, pady=15)
 
-        # 버튼 프레임
+        # 버튼 프레임 (우측 네비게이션)
         btn_frame = ctk.CTkFrame(header_frame, fg_color="transparent")
         btn_frame.pack(side="right", padx=20, pady=10)
 
@@ -76,17 +84,17 @@ class Dashboard(ctk.CTkFrame):
         )
         self.refresh_btn.pack(side="right", padx=3)
 
-        # 전체 자동 시청 버튼
-        self.all_courses_btn = ctk.CTkButton(
+        # 로그 토글 버튼
+        self.log_btn = ctk.CTkButton(
             btn_frame,
-            text="전체시청",
-            width=70,
+            text="로그",
+            width=50,
             height=32,
-            fg_color="#9C27B0",
-            hover_color="#7B1FA2",
-            command=self._on_all_courses,
+            fg_color="#607D8B",
+            hover_color="#455A64",
+            command=self._toggle_log,
         )
-        self.all_courses_btn.pack(side="right", padx=3)
+        self.log_btn.pack(side="right", padx=3)
 
         # 강의페이지로 가기 버튼
         self.go_lms_btn = ctk.CTkButton(
@@ -112,6 +120,56 @@ class Dashboard(ctk.CTkFrame):
         )
         self.login_btn.pack(side="right", padx=3)
 
+    def _create_toolbar(self) -> None:
+        """재생 컨트롤 툴바 생성"""
+        toolbar = ctk.CTkFrame(self, fg_color="#F0F0F0", height=42)
+        toolbar.pack(fill="x", padx=0, pady=0)
+        toolbar.pack_propagate(False)
+
+        ctrl_frame = ctk.CTkFrame(toolbar, fg_color="transparent")
+        ctrl_frame.pack(side="left", padx=15, pady=5)
+
+        # 재생 버튼
+        self.play_btn = ctk.CTkButton(
+            ctrl_frame,
+            text="▶ 재생",
+            width=70,
+            height=30,
+            fg_color="#4CAF50",
+            hover_color="#388E3C",
+            font=ctk.CTkFont(size=13),
+            command=self._on_all_courses,
+        )
+        self.play_btn.pack(side="left", padx=2)
+
+        # 일시정지 버튼
+        self.pause_btn = ctk.CTkButton(
+            ctrl_frame,
+            text="⏸ 일시정지",
+            width=85,
+            height=30,
+            fg_color="#FF9800",
+            hover_color="#F57C00",
+            font=ctk.CTkFont(size=13),
+            state="disabled",
+            command=self._on_pause,
+        )
+        self.pause_btn.pack(side="left", padx=2)
+
+        # 중지 버튼
+        self.stop_btn = ctk.CTkButton(
+            ctrl_frame,
+            text="■ 중지",
+            width=65,
+            height=30,
+            fg_color="#F44336",
+            hover_color="#D32F2F",
+            font=ctk.CTkFont(size=13),
+            state="disabled",
+            command=self._on_stop,
+        )
+        self.stop_btn.pack(side="left", padx=2)
+
     def _create_content(self) -> None:
         """컨텐츠 영역 생성"""
         # 스크롤 가능한 프레임
@@ -133,12 +191,28 @@ class Dashboard(ctk.CTkFrame):
 
     def _create_footer(self) -> None:
         """푸터 생성"""
-        footer_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", height=40)
-        footer_frame.pack(fill="x", side="bottom")
-        footer_frame.pack_propagate(False)
+        self.footer_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", height=40)
+        self.footer_frame.pack(fill="x", side="bottom")
+        self.footer_frame.pack_propagate(False)
 
-        self.status_label = StatusLabel(footer_frame)
+        self.status_label = StatusLabel(self.footer_frame)
         self.status_label.pack(side="left", padx=20, pady=10)
+
+        # 로그 뷰어 (초기에는 숨김, 푸터 바로 위에 배치)
+        self.log_viewer = LogViewer(self, height=150)
+
+    def _toggle_log(self) -> None:
+        """로그 패널 표시/숨기기"""
+        if self._log_visible:
+            self.log_viewer.pack_forget()
+            self._log_visible = False
+        else:
+            self.log_viewer.pack(fill="x", side="bottom", before=self.footer_frame)
+            self._log_visible = True
+
+    def add_log(self, message: str, level: str = "INFO") -> None:
+        """로그 메시지 추가 (외부에서 호출)"""
+        self.log_viewer.add_log(message, level)
 
     def _on_login(self) -> None:
         """로그인 버튼 클릭"""
@@ -156,9 +230,34 @@ class Dashboard(ctk.CTkFrame):
             self.on_go_lms_click()
 
     def _on_all_courses(self) -> None:
-        """전체 자동 시청 버튼 클릭"""
+        """재생 버튼 클릭"""
         if self.on_all_courses_click:
             self.on_all_courses_click()
+
+    def _on_pause(self) -> None:
+        """일시정지 버튼 클릭"""
+        if self.on_pause_click:
+            self.on_pause_click()
+
+    def _on_stop(self) -> None:
+        """중지 버튼 클릭"""
+        if self.on_stop_click:
+            self.on_stop_click()
+
+    def set_playback_state(self, state: str) -> None:
+        """재생 컨트롤 상태 설정 (idle, playing, paused)"""
+        if state == "playing":
+            self.play_btn.configure(state="disabled")
+            self.pause_btn.configure(state="normal", text="⏸ 일시정지")
+            self.stop_btn.configure(state="normal")
+        elif state == "paused":
+            self.play_btn.configure(state="disabled")
+            self.pause_btn.configure(state="normal", text="▶ 재개")
+            self.stop_btn.configure(state="normal")
+        else:  # idle
+            self.play_btn.configure(state="normal")
+            self.pause_btn.configure(state="disabled", text="⏸ 일시정지")
+            self.stop_btn.configure(state="disabled")
 
     def set_status(self, text: str, status_type: str = "normal") -> None:
         """상태 표시 업데이트"""
@@ -229,10 +328,9 @@ class Dashboard(ctk.CTkFrame):
         self.empty_label.pack(pady=50)
 
     def set_buttons_enabled(
-        self, login: bool = True, refresh: bool = True, go_lms: bool = True, all_courses: bool = True
+        self, login: bool = True, refresh: bool = True, go_lms: bool = True
     ) -> None:
         """버튼 활성화/비활성화"""
         self.login_btn.configure(state="normal" if login else "disabled")
         self.refresh_btn.configure(state="normal" if refresh else "disabled")
         self.go_lms_btn.configure(state="normal" if go_lms else "disabled")
-        self.all_courses_btn.configure(state="normal" if all_courses else "disabled")

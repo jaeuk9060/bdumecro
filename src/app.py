@@ -19,6 +19,22 @@ from src.utils.config import Config
 logger = logging.getLogger(__name__)
 
 
+class GUILogHandler(logging.Handler):
+    """로그를 GUI 대시보드로 전달하는 핸들러"""
+
+    def __init__(self, app: "BDUTrackerApp"):
+        super().__init__()
+        self.app = app
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            msg = self.format(record)
+            level = record.levelname
+            self.app.after(0, lambda: self.app.dashboard.add_log(msg, level))
+        except Exception:
+            self.handleError(record)
+
+
 class BDUTrackerApp(ctk.CTk):
     """BDU LMS 트래커 애플리케이션"""
 
@@ -30,9 +46,12 @@ class BDUTrackerApp(ctk.CTk):
         self.login_handler: LoginHandler | None = None
         self.is_logged_in = False
         self.courses: list[CourseInfo] = []  # 과목 목록 저장
+        self._stop_event = threading.Event()
+        self._pause_event = threading.Event()
 
         self._setup_window()
         self._create_dashboard()
+        self._setup_gui_logging()
 
     def _setup_window(self) -> None:
         """윈도우 설정"""
@@ -68,8 +87,16 @@ class BDUTrackerApp(ctk.CTk):
             on_go_lms_click=self._on_go_lms,
             on_course_click=self._on_course_click,
             on_all_courses_click=self._on_all_courses_click,
+            on_pause_click=self._on_pause,
+            on_stop_click=self._on_stop,
         )
         self.dashboard.pack(fill="both", expand=True)
+
+    def _setup_gui_logging(self) -> None:
+        """GUI 로그 핸들러를 root logger에 등록"""
+        gui_handler = GUILogHandler(self)
+        gui_handler.setFormatter(logging.Formatter("%(name)s - %(message)s"))
+        logging.getLogger().addHandler(gui_handler)
 
     def _on_login(self) -> None:
         """로그인 버튼 클릭 핸들러"""
@@ -198,13 +225,47 @@ class BDUTrackerApp(ctk.CTk):
         thread = threading.Thread(target=self._go_lms_process, daemon=True)
         thread.start()
 
+    def _on_pause(self) -> None:
+        """일시정지/재개 버튼 클릭"""
+        if self._pause_event.is_set():
+            # 재개
+            self._pause_event.clear()
+            self._update_status("재생 재개...", "loading")
+            self.after(0, lambda: self.dashboard.set_playback_state("playing"))
+        else:
+            # 일시정지
+            self._pause_event.set()
+            self._update_status("일시정지됨", "waiting")
+            self.after(0, lambda: self.dashboard.set_playback_state("paused"))
+
+    def _on_stop(self) -> None:
+        """중지 버튼 클릭"""
+        self._stop_event.set()
+        self._pause_event.clear()  # 일시정지 상태에서 중지 시 풀어줌
+        self._update_status("중지 요청됨...", "waiting")
+
+    def _check_stop_pause(self) -> bool:
+        """중지/일시정지 이벤트 확인. 중지 요청 시 True 반환."""
+        if self._stop_event.is_set():
+            return True
+        while self._pause_event.is_set():
+            if self._stop_event.is_set():
+                return True
+            time.sleep(0.5)
+        return False
+
     def _on_all_courses_click(self) -> None:
-        """전체 자동 시청 버튼 클릭"""
+        """재생 버튼 클릭"""
         if not self.login_handler:
             self.dashboard.set_status("먼저 포털을 열어주세요.", "error")
             return
 
-        self.dashboard.set_buttons_enabled(False, False, False, False)
+        # 이벤트 초기화
+        self._stop_event.clear()
+        self._pause_event.clear()
+
+        self.dashboard.set_buttons_enabled(False, False, False)
+        self.after(0, lambda: self.dashboard.set_playback_state("playing"))
         self.dashboard.set_status("미청취 과목 탐색 및 자동 시청 시작...", "loading")
         thread = threading.Thread(
             target=self._play_all_incomplete_courses,
@@ -221,6 +282,10 @@ class BDUTrackerApp(ctk.CTk):
 
         try:
             while True:
+                if self._check_stop_pause():
+                    self._update_status("중지됨", "waiting")
+                    break
+
                 # 1. LMS 메인으로 이동
                 self._update_status("LMS 페이지로 이동 중...", "loading")
                 driver = self.login_handler.driver
@@ -251,6 +316,10 @@ class BDUTrackerApp(ctk.CTk):
                             f"전체 {completed_count}개 과목 완료! 더 이상 미청취 강의 없음",
                             "success"
                         )
+                    break
+
+                if self._check_stop_pause():
+                    self._update_status("중지됨", "waiting")
                     break
 
                 # 5. 첫 번째 미완료 과목 시청
@@ -288,6 +357,7 @@ class BDUTrackerApp(ctk.CTk):
             self._update_status(f"오류 발생: {str(e)}", "error")
         finally:
             self._enable_buttons()
+            self.after(0, lambda: self.dashboard.set_playback_state("idle"))
 
     def _start_lecture(self, course: CourseInfo) -> None:
         """강의 수강 시작"""
@@ -299,11 +369,21 @@ class BDUTrackerApp(ctk.CTk):
         )
         thread.start()
 
+    def _ensure_lms_page(self, driver) -> None:
+        """현재 페이지가 LMS인지 확인하고, 아니면 재이동"""
+        current_url = driver.current_url
+        if 'lms.bdu.ac.kr' not in current_url:
+            logger.warning(f"LMS 페이지가 아님: {current_url}, 재이동 시도")
+            driver.get(self.config.LMS_URL)
+            time.sleep(3)
+
     def _navigate_to_lecture(self, course: CourseInfo) -> None:
         """강의실로 이동 (백그라운드 스레드)"""
         try:
+            driver = self.login_handler.driver
+            self._ensure_lms_page(driver)
             # onclick 스크립트 실행
-            self.login_handler.driver.execute_script(course.onclick_script)
+            driver.execute_script(course.onclick_script)
             self._update_status(f"'{course.name}' 강의실 열림", "success")
         except Exception as e:
             self._update_status(f"강의실 이동 실패: {str(e)}", "error")
@@ -318,18 +398,19 @@ class BDUTrackerApp(ctk.CTk):
         try:
             driver = self.login_handler.driver
 
-            # 1. 강의실로 이동
+            # 1. 강의실로 이동 (LMS 페이지 확인 후)
             self._update_status(f"'{course.name}' 강의실 이동 중...", "loading")
+            self._ensure_lms_page(driver)
             driver.execute_script(course.onclick_script)
             time.sleep(3)  # 페이지 로딩 대기
 
-            # 2. 전체보기 버튼 클릭 (모든 주차 표시)
+            # 2. 전체보기 버튼 클릭 (모든 주차 표시) - JS로 실행하여 오버레이 우회
             self._update_status("전체 강의 목록 로딩 중...", "loading")
             try:
-                all_btn = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.ID, "btn_ALL"))
+                WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.ID, "btn_ALL"))
                 )
-                all_btn.click()
+                driver.execute_script("weekClickEvent('ALL')")
 
                 # AJAX 완료 후 강의 버튼이 DOM에 나타날 때까지 대기 (최대 15초)
                 WebDriverWait(driver, 15).until(
@@ -364,13 +445,16 @@ class BDUTrackerApp(ctk.CTk):
             completed = 0
 
             for i in range(incomplete_count):
+                if self._check_stop_pause():
+                    break
+
                 try:
-                    # 전체보기 클릭하여 목록 갱신 (강의 완료 후 상태 반영)
+                    # 전체보기 클릭하여 목록 갱신 (강의 완료 후 상태 반영) - JS로 오버레이 우회
                     try:
-                        all_btn = WebDriverWait(driver, 10).until(
-                            EC.element_to_be_clickable((By.ID, "btn_ALL"))
+                        WebDriverWait(driver, 10).until(
+                            EC.presence_of_element_located((By.ID, "btn_ALL"))
                         )
-                        all_btn.click()
+                        driver.execute_script("weekClickEvent('ALL')")
 
                         # 강의 버튼 로딩 대기
                         WebDriverWait(driver, 15).until(
@@ -392,9 +476,13 @@ class BDUTrackerApp(ctk.CTk):
                         logger.info("더 이상 미완료 강의 없음")
                         break
 
-                    # 강의 버튼 직접 클릭
+                    # 강의 버튼 JavaScript로 클릭 (onclick 핸들러 직접 실행)
                     self._update_status(f"강의 {i+1}/{incomplete_count} 열기 중...", "loading")
-                    lecture_btn.click()
+                    onclick_script = lecture_btn.get_attribute("onclick")
+                    if onclick_script:
+                        driver.execute_script(onclick_script)
+                    else:
+                        driver.execute_script("arguments[0].click()", lecture_btn)
                     time.sleep(5)  # 모달 로드 대기
 
                     # 이어듣기 모달 확인 및 "예" 클릭
@@ -439,6 +527,9 @@ class BDUTrackerApp(ctk.CTk):
 
         while True:
             try:
+                if self._check_stop_pause():
+                    break
+
                 # 1. 확인 모달 체크 및 클릭 (출석 확인 또는 완료 확인)
                 modal_btn = self._find_attendance_modal_button(driver, timeout=2)
                 if modal_btn:

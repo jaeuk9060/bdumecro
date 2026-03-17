@@ -1,10 +1,13 @@
 """로그인 감지 모듈"""
+import logging
 import time
 from typing import Callable
 
 from selenium import webdriver
 
 from src.utils.config import Config
+
+logger = logging.getLogger(__name__)
 
 
 class LoginHandler:
@@ -80,13 +83,13 @@ class LoginHandler:
     def navigate_to_lms(self) -> bool:
         """LMS 페이지로 이동"""
         try:
-            print(f"LMS 이동 시도: {self.config.LMS_URL}")
+            logger.info(f"LMS 이동 시도: {self.config.LMS_URL}")
             self.driver.get(self.config.LMS_URL)
             time.sleep(5)  # 페이지 로딩 대기 (증가)
-            print(f"현재 URL: {self.driver.current_url}")
+            logger.info(f"현재 URL: {self.driver.current_url}")
             return True
         except Exception as e:
-            print(f"LMS 이동 실패: {e}")
+            logger.error(f"LMS 이동 실패: {e}")
             return False
 
     def get_lms_page_source(self) -> str:

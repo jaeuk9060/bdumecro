@@ -1,8 +1,6 @@
 """Selenium WebDriver 관리 모듈"""
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 
 from src.utils.config import Config
 
@@ -27,9 +25,8 @@ class BrowserDriver:
         # 한국어 설정
         options.add_argument("--lang=ko-KR")
 
-        # WebDriver 자동 관리
-        service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=service, options=options)
+        # WebDriver 자동 관리 (Selenium 4.6+ 내장 selenium-manager 사용)
+        self.driver = webdriver.Chrome(options=options)
 
         # 자동화 감지 방지
         self.driver.execute_script(

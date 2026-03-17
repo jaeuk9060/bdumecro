@@ -1,8 +1,86 @@
 """재사용 가능한 UI 컴포넌트"""
 import customtkinter as ctk
+from datetime import datetime
 from typing import Callable
 
 from src.parser.lms_parser import CourseInfo
+
+
+class LogViewer(ctk.CTkFrame):
+    """실시간 로그 뷰어 컴포넌트"""
+
+    # 로그 레벨별 색상
+    LEVEL_COLORS = {
+        "INFO": "#333333",
+        "WARNING": "#FF9800",
+        "ERROR": "#F44336",
+        "DEBUG": "#9E9E9E",
+        "CRITICAL": "#D32F2F",
+    }
+
+    def __init__(self, master, height: int = 200, **kwargs):
+        super().__init__(master, fg_color="#FFFFFF", **kwargs)
+
+        self._create_widgets(height)
+
+    def _create_widgets(self, height: int) -> None:
+        """위젯 생성"""
+        # 헤더 (타이틀 + 지우기 버튼)
+        header = ctk.CTkFrame(self, fg_color="transparent", height=30)
+        header.pack(fill="x", padx=10, pady=(5, 0))
+        header.pack_propagate(False)
+
+        ctk.CTkLabel(
+            header,
+            text="로그",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            text_color="#333333",
+        ).pack(side="left")
+
+        ctk.CTkButton(
+            header,
+            text="지우기",
+            width=50,
+            height=24,
+            fg_color="#F1F3F4",
+            hover_color="#E8EAED",
+            text_color="#5F6368",
+            font=ctk.CTkFont(size=11),
+            corner_radius=4,
+            command=self.clear,
+        ).pack(side="right")
+
+        # 로그 텍스트 영역
+        self.textbox = ctk.CTkTextbox(
+            self,
+            height=height,
+            font=ctk.CTkFont(family="Consolas", size=11),
+            fg_color="#FAFAFA",
+            text_color="#333333",
+            corner_radius=6,
+            state="disabled",
+            wrap="word",
+        )
+        self.textbox.pack(fill="both", expand=True, padx=10, pady=(5, 10))
+
+        # 태그 색상 설정
+        for level, color in self.LEVEL_COLORS.items():
+            self.textbox._textbox.tag_configure(level, foreground=color)
+
+    def add_log(self, message: str, level: str = "INFO") -> None:
+        """로그 메시지 추가"""
+        self.textbox.configure(state="normal")
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        line = f"[{timestamp}] [{level}] {message}\n"
+        self.textbox._textbox.insert("end", line, level)
+        self.textbox._textbox.see("end")
+        self.textbox.configure(state="disabled")
+
+    def clear(self) -> None:
+        """로그 지우기"""
+        self.textbox.configure(state="normal")
+        self.textbox.delete("1.0", "end")
+        self.textbox.configure(state="disabled")
 
 
 class ProgressBar(ctk.CTkFrame):

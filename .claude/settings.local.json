@@ -24,7 +24,8 @@
       "Bash(taskkill:*)",
       "Bash(tasklist:*)",
       "Bash(cmd //c \"taskkill /F /IM BDU_LMS_Tracker.exe\")",
-      "Bash(cmd //c \"rmdir /S /Q dist\\\\BDU_LMS_Tracker\")"
+      "Bash(cmd //c \"rmdir /S /Q dist\\\\BDU_LMS_Tracker\")",
+      "Bash(python3:*)"
     ]
   }
 }

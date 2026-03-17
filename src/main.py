@@ -7,12 +7,19 @@ from pathlib import Path
 def setup_logging() -> None:
     """로깅 설정"""
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    handlers = [logging.StreamHandler(sys.stdout)]
+
+    # 항상 파일 로깅 활성화 (개발/EXE 모두)
+    if getattr(sys, 'frozen', False):
+        log_path = Path(sys.executable).parent / "bdu_tracker.log"
+    else:
+        log_path = Path(__file__).parent.parent / "bdu_tracker.log"
+    handlers.append(logging.FileHandler(str(log_path), encoding='utf-8'))
+
     logging.basicConfig(
         level=logging.INFO,
         format=log_format,
-        handlers=[
-            logging.StreamHandler(sys.stdout),
-        ],
+        handlers=handlers,
     )
 
 
