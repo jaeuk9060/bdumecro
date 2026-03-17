@@ -215,6 +215,9 @@ class BDUTrackerApp(ctk.CTk):
     def _play_all_incomplete_courses(self) -> None:
         """모든 미완료 과목을 순차적으로 시청 (매 과목 완료 후 재탐색)"""
         completed_count = 0
+        failed_courses: set[str] = set()  # 실패한 과목 추적
+        retry_count: dict[str, int] = {}  # 과목별 재시도 횟수
+        MAX_RETRY_PER_COURSE = 3
 
         try:
             while True:
@@ -230,30 +233,55 @@ class BDUTrackerApp(ctk.CTk):
                 parser = LMSParser(html)
                 courses = parser.parse()
 
-                # 3. 미청취 강의가 있는 과목 필터링
-                incomplete = [c for c in courses if c.remaining_lectures > 0]
+                # 3. 미청취 강의가 있는 과목 필터링 (실패한 과목 제외)
+                incomplete = [
+                    c for c in courses
+                    if c.remaining_lectures > 0 and c.name not in failed_courses
+                ]
 
                 # 4. 미청취 과목이 없으면 종료
                 if not incomplete:
-                    self._update_status(
-                        f"전체 {completed_count}개 과목 완료! 더 이상 미청취 강의 없음",
-                        "success"
-                    )
+                    if failed_courses:
+                        self._update_status(
+                            f"완료 {completed_count}개, 실패 {len(failed_courses)}개 (강의를 찾을 수 없음)",
+                            "warning" if completed_count > 0 else "error"
+                        )
+                    else:
+                        self._update_status(
+                            f"전체 {completed_count}개 과목 완료! 더 이상 미청취 강의 없음",
+                            "success"
+                        )
                     break
 
                 # 5. 첫 번째 미완료 과목 시청
                 course = incomplete[0]
+                course_name = course.name
+
+                # 재시도 횟수 체크
+                retry_count[course_name] = retry_count.get(course_name, 0) + 1
+                if retry_count[course_name] > MAX_RETRY_PER_COURSE:
+                    logger.error(f"'{course_name}' {MAX_RETRY_PER_COURSE}회 실패, 스킵")
+                    failed_courses.add(course_name)
+                    continue
+
                 self._update_status(
-                    f"'{course.name}' 시청 시작... (미청취: {course.remaining_lectures}개)",
+                    f"'{course_name}' 시청 시작... (미청취: {course.remaining_lectures}개)",
                     "loading"
                 )
 
-                self._open_all_lectures(course)
-                completed_count += 1
-                self._update_status(
-                    f"'{course.name}' 완료! 다음 과목 탐색 중...",
-                    "loading"
-                )
+                success = self._open_all_lectures(course)
+                if success:
+                    completed_count += 1
+                    self._update_status(
+                        f"'{course_name}' 완료! 다음 과목 탐색 중...",
+                        "loading"
+                    )
+                else:
+                    # 강의 찾기/시청 실패
+                    logger.warning(f"'{course_name}' 시청 실패 (시도 {retry_count[course_name]}/{MAX_RETRY_PER_COURSE})")
+                    if retry_count[course_name] >= MAX_RETRY_PER_COURSE:
+                        failed_courses.add(course_name)
+                    # 다시 시도하기 위해 continue
 
         except Exception as e:
             logger.error(f"전체 시청 중 오류: {e}")
@@ -280,8 +308,13 @@ class BDUTrackerApp(ctk.CTk):
         except Exception as e:
             self._update_status(f"강의실 이동 실패: {str(e)}", "error")
 
-    def _open_all_lectures(self, course: CourseInfo) -> None:
-        """전체 미청취 강의를 새 탭으로 열기 (백그라운드 스레드)"""
+    def _open_all_lectures(self, course: CourseInfo) -> bool:
+        """전체 미청취 강의를 새 탭으로 열기 (백그라운드 스레드)
+
+        Returns:
+            True: 최소 1개 강의 시청 완료
+            False: 강의 찾기/시청 실패
+        """
         try:
             driver = self.login_handler.driver
 
@@ -297,9 +330,15 @@ class BDUTrackerApp(ctk.CTk):
                     EC.element_to_be_clickable((By.ID, "btn_ALL"))
                 )
                 all_btn.click()
-                time.sleep(2)
+
+                # AJAX 완료 후 강의 버튼이 DOM에 나타날 때까지 대기 (최대 15초)
+                WebDriverWait(driver, 15).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "button[onclick*='lectView']"))
+                )
+                time.sleep(1)  # DOM 안정화
+                logger.info("강의 버튼 로딩 완료")
             except TimeoutException:
-                logger.warning("전체보기 버튼을 찾을 수 없습니다.")
+                logger.warning("전체보기 버튼 또는 강의 버튼 로딩 타임아웃")
 
             # 3. 강의듣기/다시보기 버튼 모두 찾기
             lecture_buttons = driver.find_elements(
@@ -308,41 +347,54 @@ class BDUTrackerApp(ctk.CTk):
 
             if not lecture_buttons:
                 self._update_status("재생 가능한 강의를 찾을 수 없습니다.", "error")
-                return
+                return False
 
-            # 미완료 강의만 필터링 (진도율 < 100%)
-            incomplete_lectures = []
-            for btn in lecture_buttons:
-                try:
-                    # 버튼 텍스트로 확인 (강의듣기 = 미완료, 다시보기 = 완료)
-                    btn_text = btn.text.strip()
-                    if "강의듣기" in btn_text:
-                        onclick = btn.get_attribute("onclick")
-                        incomplete_lectures.append(onclick)
-                except Exception:
-                    continue
+            # 미완료 강의 개수 파악 (강의보기 버튼 = 미완료)
+            incomplete_count = sum(
+                1 for btn in lecture_buttons
+                if "강의보기" in btn.text
+            )
 
-            if not incomplete_lectures:
+            if incomplete_count == 0:
                 self._update_status("미청취 강의가 없습니다!", "success")
-                return
+                return True  # 미청취 강의 없음 = 이미 완료된 과목
 
-            # 4. 각 강의를 순차적으로 시청 (한 강의씩)
-            total = len(incomplete_lectures)
-            self._update_status(f"미청취 강의 {total}개 발견! 순차 시청 시작...", "loading")
+            # 4. 각 강의를 순차적으로 시청 (강의실 페이지에서 직접 클릭)
+            self._update_status(f"미청취 강의 {incomplete_count}개 발견! 순차 시청 시작...", "loading")
+            completed = 0
 
-            for i, onclick in enumerate(incomplete_lectures):
+            for i in range(incomplete_count):
                 try:
-                    # 강의실 페이지로 이동
-                    driver.get(self.config.LMS_URL)
-                    time.sleep(2)
+                    # 전체보기 클릭하여 목록 갱신 (강의 완료 후 상태 반영)
+                    try:
+                        all_btn = WebDriverWait(driver, 10).until(
+                            EC.element_to_be_clickable((By.ID, "btn_ALL"))
+                        )
+                        all_btn.click()
 
-                    # 강의실로 이동
-                    driver.execute_script(course.onclick_script)
-                    time.sleep(2)
+                        # 강의 버튼 로딩 대기
+                        WebDriverWait(driver, 15).until(
+                            EC.presence_of_element_located((By.CSS_SELECTOR, "button[onclick*='lectView']"))
+                        )
+                        time.sleep(1)
+                    except TimeoutException:
+                        logger.warning("전체보기 버튼 또는 강의 목록 로딩 타임아웃")
 
-                    # 강의 재생 스크립트 실행
-                    self._update_status(f"강의 {i+1}/{total} 열기 중...", "loading")
-                    driver.execute_script(onclick)
+                    # 첫 번째 "강의보기" 버튼 찾기 (미완료 강의)
+                    buttons = driver.find_elements(By.CSS_SELECTOR, "button[onclick*='lectView']")
+                    lecture_btn = None
+                    for btn in buttons:
+                        if "강의보기" in btn.text:
+                            lecture_btn = btn
+                            break
+
+                    if not lecture_btn:
+                        logger.info("더 이상 미완료 강의 없음")
+                        break
+
+                    # 강의 버튼 직접 클릭
+                    self._update_status(f"강의 {i+1}/{incomplete_count} 열기 중...", "loading")
+                    lecture_btn.click()
                     time.sleep(5)  # 모달 로드 대기
 
                     # 이어듣기 모달 확인 및 "예" 클릭
@@ -350,29 +402,34 @@ class BDUTrackerApp(ctk.CTk):
                     time.sleep(3)
 
                     # 비디오 자동 재생 시작
-                    self._update_status(f"재생 버튼 대기 중... ({i+1}/{total})", "loading")
+                    self._update_status(f"재생 버튼 대기 중... ({i+1}/{incomplete_count})", "loading")
                     if not self._start_video_playback(driver):
-                        self._update_status(f"재생 버튼 클릭 실패 ({i+1}/{total})", "error")
+                        self._update_status(f"재생 버튼 클릭 실패 ({i+1}/{incomplete_count})", "error")
                         continue
 
-                    self._update_status(f"강의 {i+1}/{total} 재생 중...", "loading")
+                    self._update_status(f"강의 {i+1}/{incomplete_count} 재생 중...", "loading")
 
                     # 강의 완료까지 대기 (출석 확인 포함)
-                    self._wait_for_lecture_completion(driver, i + 1, total)
+                    self._wait_for_lecture_completion(driver, i + 1, incomplete_count)
 
-                    self._update_status(f"강의 {i+1}/{total} 완료!", "success")
+                    self._update_status(f"강의 {i+1}/{incomplete_count} 완료!", "success")
+                    completed += 1
                     time.sleep(2)
+
+                    # 모달 닫히면 강의실 페이지로 자동 복귀됨
 
                 except Exception as e:
                     logger.error(f"강의 {i+1} 시청 실패: {e}")
                     self._update_status(f"강의 {i+1} 오류: {str(e)}", "error")
                     continue
 
-            self._update_status(f"모든 강의 완료! ({total}개)", "success")
+            self._update_status(f"모든 강의 완료! ({completed}개)", "success")
+            return True
 
         except Exception as e:
             logger.error(f"강의 열기 오류: {e}")
             self._update_status(f"오류: {str(e)}", "error")
+            return False
 
     def _wait_for_lecture_completion(self, driver, current: int, total: int) -> None:
         """강의 완료까지 대기 (출석 확인 + 완료 확인 모달 자동 클릭)"""

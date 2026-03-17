@@ -19,7 +19,12 @@
       "Bash(git push:*)",
       "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" release create:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(taskkill:*)",
+      "Bash(tasklist:*)",
+      "Bash(cmd //c \"taskkill /F /IM BDU_LMS_Tracker.exe\")",
+      "Bash(cmd //c \"rmdir /S /Q dist\\\\BDU_LMS_Tracker\")"
     ]
   }
 }
