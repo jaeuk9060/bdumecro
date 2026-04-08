@@ -290,7 +290,16 @@ class BDUTrackerApp(ctk.CTk):
                 self._update_status("LMS 페이지로 이동 중...", "loading")
                 driver = self.login_handler.driver
                 driver.get(self.config.LMS_URL)
-                time.sleep(3)
+
+                # 과목 카드가 로드될 때까지 대기 (AJAX 로딩)
+                try:
+                    WebDriverWait(driver, 15).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "div.card-list.active [onclick]"))
+                    )
+                    time.sleep(1)  # DOM 안정화
+                except TimeoutException:
+                    logger.warning("과목 카드 로딩 타임아웃, 기본 대기 사용")
+                    time.sleep(3)
 
                 # 2. 과목 리스트 재파싱
                 self._update_status("미청취 과목 탐색 중...", "loading")
